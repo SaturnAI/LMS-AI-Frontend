@@ -1,16 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/useAuth";
-import { logout } from "@/lib/api";
+import { useAuth, useLogout } from "@/hooks/use-auth";
+import { Button } from "@/components/ui/button";
 import FullPageLoader from "@/components/FullPageLoader";
-import styles from "./dashboard.module.css";
 
 export default function DashboardPage() {
   const router = useRouter();
   const auth = useAuth();
-  const [loggingOut, setLoggingOut] = useState(false);
+  const logout = useLogout();
 
   useEffect(() => {
     if (auth.status === "guest") router.replace("/login");
@@ -23,33 +22,32 @@ export default function DashboardPage() {
   const { profile } = auth;
 
   async function handleLogout() {
-    setLoggingOut(true);
-    await logout();
+    await logout.mutateAsync();
     router.replace("/login");
   }
 
   return (
-    <main className={styles.page}>
-      <header className={styles.header}>
-        <div className={styles.brand}>
-          <span className={styles.logo}>
-            <span className={styles.logoMark} />
+    <main className="min-h-screen bg-muted">
+      <header className="flex items-center justify-between border-b bg-card px-7 py-4">
+        <div className="flex items-center gap-2.5">
+          <span className="grid size-8 place-items-center rounded-[9px] bg-brand-navy">
+            <span className="size-2.5 rotate-45 rounded-[2px] bg-brand-lime" />
           </span>
-          <span className={styles.brandName}>LMS AI</span>
+          <span className="font-bold tracking-tight text-foreground">LMS AI</span>
         </div>
-        <button className={styles.logout} onClick={handleLogout} disabled={loggingOut}>
-          {loggingOut ? "Signing out…" : "Sign out"}
-        </button>
+        <Button variant="outline" size="sm" onClick={handleLogout} disabled={logout.isPending}>
+          {logout.isPending ? "Signing out…" : "Sign out"}
+        </Button>
       </header>
 
-      <section className={styles.body}>
-        <h1 className={styles.greeting}>Hello 👋</h1>
-        <p className={styles.sub}>
+      <section className="mx-auto max-w-4xl px-7 py-12">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Hello 👋</h1>
+        <p className="mt-2 text-muted-foreground">
           Welcome to LMS AI, <strong>{profile.name}</strong>. You&apos;re signed in as{" "}
           <strong>{profile.role.replace("_", " ")}</strong>
           {profile.email ? ` · ${profile.email}` : ""}.
         </p>
-        <p className={styles.note}>This is your dashboard — more coming soon.</p>
+        <p className="mt-8 text-sm text-muted-foreground/70">This is your dashboard — more coming soon.</p>
       </section>
     </main>
   );

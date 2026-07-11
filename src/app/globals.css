@@ -1,89 +1,157 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
 /*
- * Global design tokens — the single source of truth for the product's colour
- * scheme. Components reference these via var(--token); never hardcode hex in
- * component CSS so the whole product stays consistent.
+ * Brand palette mapped onto shadcn's semantic tokens. This is the single
+ * source of truth for the product's colour scheme — components use Tailwind
+ * utilities (bg-primary, text-muted-foreground, border-border, bg-brand-lime…)
+ * that resolve to these variables. Never hardcode hex in components.
  */
 :root {
-  /* Brand */
-  --color-primary: #2c3a64;        /* navy — primary actions */
-  --color-primary-hover: #354577;
-  --color-primary-text: #ffffff;
-  --color-accent: #c3e8a0;         /* lime — highlights/logo */
-  --color-sky: #cfe4f7;            /* soft blue — decoration */
+  --radius: 0.625rem;
 
-  /* Surfaces */
-  --color-bg: #ffffff;
-  --color-bg-subtle: #f4f7fc;      /* brand-panel gradient (light) */
-  --color-bg-subtle-2: #e7edf6;    /* brand-panel gradient (deep) */
-  --color-surface: #ffffff;
-  --color-input-bg: #ffffff;
+  --background: #ffffff;
+  --foreground: #1e2a4d;
+  --card: #ffffff;
+  --card-foreground: #1e2a4d;
+  --popover: #ffffff;
+  --popover-foreground: #1e2a4d;
+  --primary: #2c3a64; /* navy */
+  --primary-foreground: #ffffff;
+  --secondary: #eef3fb;
+  --secondary-foreground: #1e2a4d;
+  --muted: #f4f7fc;
+  --muted-foreground: #5b6685;
+  --accent: #eef3fb;
+  --accent-foreground: #1e2a4d;
+  --destructive: #dc2626;
+  --border: #dce6f5;
+  --input: #dce6f5;
+  --ring: #2c3a64;
 
-  /* Text */
-  --color-text: #1e2a4d;           /* deep navy */
-  --color-text-muted: #5b6685;
-  --color-text-faint: #9aa4bd;
+  /* Decorative brand colours (used by the auth brand panel) */
+  --brand-navy: #2c3a64;
+  --brand-lime: #c3e8a0;
+  --brand-sky: #cfe4f7;
 
-  /* Lines */
-  --color-border: #dce6f5;
-  --color-border-hover: #c6d3ea;
-  --color-divider: #e4ebf5;
-
-  /* Feedback */
-  --color-error-bg: #fef2f2;
-  --color-error-border: #f5c2c2;
-  --color-error-text: #b42318;
-  --color-success-bg: #f0fdf4;
-  --color-success-border: #bbf7d0;
-  --color-success-text: #15803d;
-
-  /* Effects & shape */
-  --focus-ring: 0 0 0 3px rgba(44, 58, 100, 0.15);
-  --radius: 10px;
-  --radius-lg: 14px;
-
-  /* Base aliases (kept so generic elements resolve to the scheme) */
-  --background: var(--color-bg);
-  --foreground: var(--color-text);
+  /* Charts / sidebar — shadcn defaults, kept for future components */
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1e2a4d;
+  --sidebar-primary: #2c3a64;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #eef3fb;
+  --sidebar-accent-foreground: #1e2a4d;
+  --sidebar-border: #dce6f5;
+  --sidebar-ring: #2c3a64;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+@theme inline {
+  --font-sans: var(--font-sans);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-lime: var(--brand-lime);
+  --color-brand-sky: var(--brand-sky);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+.dark {
+  /* The product is light-only for now; kept minimal for shadcn compatibility. */
+  --background: #0b0c10;
+  --foreground: #f3f4f6;
+  --card: #14161c;
+  --card-foreground: #f3f4f6;
+  --popover: #14161c;
+  --popover-foreground: #f3f4f6;
+  --primary: #6b7ba8;
+  --primary-foreground: #0b0c10;
+  --secondary: #1a1d24;
+  --secondary-foreground: #f3f4f6;
+  --muted: #1a1d24;
+  --muted-foreground: #9aa4bd;
+  --accent: #1a1d24;
+  --accent-foreground: #f3f4f6;
+  --destructive: #ef4444;
+  --border: #23262f;
+  --input: #23262f;
+  --ring: #6b7ba8;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  line-height: 1.6;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 
-a {
-  color: inherit;
+/* Decorative float animation for the auth brand panel */
+@theme {
+  --animate-float-a: float-a 11s ease-in-out infinite;
+  --animate-float-b: float-b 13s ease-in-out infinite;
 }
-
-/* Placeholder home page helper */
-.container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  padding: 2rem;
-  text-align: center;
+@keyframes float-a {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-22px);
+  }
 }
-.container h1 {
-  font-size: 3rem;
+@keyframes float-b {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(18px);
+  }
 }
-.container p {
-  color: var(--color-text-muted);
-  max-width: 36rem;
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-a,
+  .animate-float-b {
+    animation: none;
+  }
 }

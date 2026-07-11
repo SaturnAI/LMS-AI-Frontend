@@ -1,191 +1,181 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { forgotPassword, verifyForgotPasswordOtp, updatePassword } from "@/lib/api";
-import styles from "@/components/authForm.module.css";
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const MIN_PASSWORD_LENGTH = 8;
+import {
+  forgotEmailSchema,
+  otpSchema,
+  newPasswordSchema,
+  type ForgotEmailValues,
+  type OtpValues,
+  type NewPasswordValues,
+} from "@/lib/validations/auth";
 
 type Step = "email" | "otp" | "password" | "done";
-
-const GENERIC_ERROR = "Something went wrong. Please try again.";
 
 export default function ForgotPasswordForm() {
   const router = useRouter();
   const [step, setStep] = useState<Step>("email");
-
   const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  function reset(nextStep: Step) {
+  const emailForm = useForm<ForgotEmailValues>({
+    resolver: zodResolver(forgotEmailSchema),
+    defaultValues: { email: "" },
+  });
+  const otpForm = useForm<OtpValues>({
+    resolver: zodResolver(otpSchema),
+    defaultValues: { otp: "" },
+  });
+  const passwordForm = useForm<NewPasswordValues>({
+    resolver: zodResolver(newPasswordSchema),
+    defaultValues: { newPassword: "", confirm: "" },
+  });
+
+  async function onSubmitEmail(values: ForgotEmailValues) {
+    setError(null);
+    const res = await forgotPassword(values.email);
+    if (res.ok) {
+      setEmail(values.email);
+      setInfo(res.message || "We've sent a 6-digit code to your email.");
+      setStep("otp");
+    } else {
+      setError(res.message);
+    }
+  }
+
+  async function onSubmitOtp(values: OtpValues) {
+    setError(null);
+    const res = await verifyForgotPasswordOtp(email, values.otp);
+    if (res.ok) {
+      setInfo(null);
+      setStep("password");
+    } else {
+      setError(res.message);
+    }
+  }
+
+  async function onSubmitPassword(values: NewPasswordValues) {
+    setError(null);
+    const res = await updatePassword(email, values.newPassword);
+    if (res.ok) {
+      setStep("done");
+    } else {
+      setError(res.message);
+    }
+  }
+
+  async function resend() {
     setError(null);
     setInfo(null);
-    setStep(nextStep);
-  }
-
-  async function submitEmail(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError(null);
-    if (!EMAIL_RE.test(email)) {
-      setError("Enter a valid email address.");
-      return;
-    }
-    setSubmitting(true);
-    try {
-      const res = await forgotPassword(email);
-      if (res.ok) {
-        setError(null);
-        setInfo(res.message || "We've sent a 6-digit code to your email.");
-        setStep("otp");
-      } else {
-        setError(res.message);
-      }
-    } catch {
-      setError(GENERIC_ERROR);
-    }
-    setSubmitting(false);
-  }
-
-  async function submitOtp(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError(null);
-    if (!/^\d{6}$/.test(otp)) {
-      setError("Enter the 6-digit code from your email.");
-      return;
-    }
-    setSubmitting(true);
-    try {
-      const res = await verifyForgotPasswordOtp(email, otp);
-      if (res.ok) {
-        reset("password");
-      } else {
-        setError(res.message);
-      }
-    } catch {
-      setError(GENERIC_ERROR);
-    }
-    setSubmitting(false);
-  }
-
-  async function submitPassword(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError(null);
-    if (newPassword.length < MIN_PASSWORD_LENGTH) {
-      setError(`Password must be at least ${MIN_PASSWORD_LENGTH} characters.`);
-      return;
-    }
-    if (newPassword !== confirm) {
-      setError("Passwords do not match.");
-      return;
-    }
-    setSubmitting(true);
-    try {
-      const res = await updatePassword(email, newPassword);
-      if (res.ok) {
-        setStep("done");
-      } else {
-        // Most likely the 5-minute window expired.
-        setError(res.message);
-      }
-    } catch {
-      setError(GENERIC_ERROR);
-    }
-    setSubmitting(false);
-  }
-
-  async function resendOtp() {
-    setError(null);
-    setInfo(null);
-    setSubmitting(true);
-    try {
-      const res = await forgotPassword(email);
-      if (res.ok) {
-        setInfo(res.message || "A new code has been sent.");
-      } else {
-        setError(res.message);
-      }
-    } catch {
-      setError(GENERIC_ERROR);
-    }
-    setSubmitting(false);
+    const res = await forgotPassword(email);
+    if (res.ok) setInfo(res.message || "A new code has been sent.");
+    else setError(res.message);
   }
 
   return (
-    <div className={styles.wrap}>
+    <div className="w-full max-w-sm">
+      {error && (
+        <div
+          role="alert"
+          className="mb-4 rounded-lg border border-destructive/30 bg-destructive/10 px-3.5 py-2.5 text-sm text-destructive"
+        >
+          {error}
+        </div>
+      )}
+      {info && step !== "done" && (
+        <div
+          role="status"
+          className="mb-4 rounded-lg border border-brand-lime/60 bg-brand-lime/20 px-3.5 py-2.5 text-sm text-foreground"
+        >
+          {info}
+        </div>
+      )}
+
       {step === "email" && (
         <>
-          <h1 className={styles.title}>Reset your password</h1>
-          <p className={styles.subtitle}>Enter your email and we&apos;ll send you a verification code.</p>
-          {error && <div className={styles.error} role="alert">{error}</div>}
-          <form className={styles.form} onSubmit={submitEmail} noValidate>
-            <label className={styles.field}>
-              <span className={styles.label}>Email</span>
-              <input
-                className={styles.input}
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Reset your password</h1>
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            Enter your email and we&apos;ll send you a verification code.
+          </p>
+          <form onSubmit={emailForm.handleSubmit(onSubmitEmail)} noValidate className="mt-6 flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@company.com"
                 autoComplete="username"
                 autoFocus
-                required
-                disabled={submitting}
+                aria-invalid={!!emailForm.formState.errors.email}
+                {...emailForm.register("email")}
               />
-            </label>
-            <button type="submit" className={styles.primary} disabled={submitting}>
-              {submitting ? "Sending…" : "Send code"}
-            </button>
+              {emailForm.formState.errors.email && (
+                <p className="text-sm text-destructive">{emailForm.formState.errors.email.message}</p>
+              )}
+            </div>
+            <Button type="submit" className="w-full" disabled={emailForm.formState.isSubmitting}>
+              {emailForm.formState.isSubmitting ? "Sending…" : "Send code"}
+            </Button>
           </form>
-          <div className={styles.subtleRow}>
-            <Link className={styles.link} href="/login">← Back to sign in</Link>
+          <div className="mt-6 text-center text-sm">
+            <Link href="/login" className="font-medium text-primary hover:underline">
+              ← Back to sign in
+            </Link>
           </div>
         </>
       )}
 
       {step === "otp" && (
         <>
-          <h1 className={styles.title}>Enter the code</h1>
-          <p className={styles.subtitle}>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Enter the code</h1>
+          <p className="mt-1.5 text-sm text-muted-foreground">
             We sent a 6-digit code to <strong>{email}</strong>. It expires in 10 minutes.
           </p>
-          {info && <div className={styles.success} role="status">{info}</div>}
-          {error && <div className={styles.error} role="alert">{error}</div>}
-          <form className={styles.form} onSubmit={submitOtp} noValidate>
-            <label className={styles.field}>
-              <span className={styles.label}>Verification code</span>
-              <input
-                className={`${styles.input} ${styles.otpInput}`}
-                type="text"
+          <form onSubmit={otpForm.handleSubmit(onSubmitOtp)} noValidate className="mt-6 flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="otp">Verification code</Label>
+              <Input
+                id="otp"
                 inputMode="numeric"
                 autoComplete="one-time-code"
                 maxLength={6}
-                value={otp}
-                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
                 placeholder="••••••"
                 autoFocus
-                required
-                disabled={submitting}
+                className="text-center text-lg tracking-[0.5em]"
+                aria-invalid={!!otpForm.formState.errors.otp}
+                {...otpForm.register("otp")}
               />
-            </label>
-            <button type="submit" className={styles.primary} disabled={submitting}>
-              {submitting ? "Verifying…" : "Verify code"}
-            </button>
+              {otpForm.formState.errors.otp && (
+                <p className="text-sm text-destructive">{otpForm.formState.errors.otp.message}</p>
+              )}
+            </div>
+            <Button type="submit" className="w-full" disabled={otpForm.formState.isSubmitting}>
+              {otpForm.formState.isSubmitting ? "Verifying…" : "Verify code"}
+            </Button>
           </form>
-          <div className={styles.subtleRow}>
-            <button type="button" className={styles.linkButton} onClick={() => reset("email")} disabled={submitting}>
+          <div className="mt-6 flex justify-between text-sm">
+            <button
+              type="button"
+              onClick={() => {
+                setError(null);
+                setInfo(null);
+                setStep("email");
+              }}
+              className="font-medium text-primary hover:underline"
+            >
               ← Change email
             </button>
-            <button type="button" className={styles.linkButton} onClick={resendOtp} disabled={submitting}>
+            <button type="button" onClick={resend} className="font-medium text-primary hover:underline">
               Resend code
             </button>
           </div>
@@ -194,69 +184,73 @@ export default function ForgotPasswordForm() {
 
       {step === "password" && (
         <>
-          <h1 className={styles.title}>Set a new password</h1>
-          <p className={styles.subtitle}>Choose a new password for <strong>{email}</strong>.</p>
-          {error && <div className={styles.error} role="alert">{error}</div>}
-          <form className={styles.form} onSubmit={submitPassword} noValidate>
-            <label className={styles.field}>
-              <span className={styles.label}>New password</span>
-              <div className={styles.passwordWrap}>
-                <input
-                  className={styles.input}
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Set a new password</h1>
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            Choose a new password for <strong>{email}</strong>.
+          </p>
+          <form
+            onSubmit={passwordForm.handleSubmit(onSubmitPassword)}
+            noValidate
+            className="mt-6 flex flex-col gap-4"
+          >
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="newPassword">New password</Label>
+              <div className="relative">
+                <Input
+                  id="newPassword"
                   type={showPassword ? "text" : "password"}
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="At least 8 characters"
                   autoComplete="new-password"
                   autoFocus
-                  required
-                  disabled={submitting}
+                  aria-invalid={!!passwordForm.formState.errors.newPassword}
+                  {...passwordForm.register("newPassword")}
                 />
                 <button
                   type="button"
-                  className={styles.reveal}
-                  onClick={() => setShowPassword((s) => !s)}
                   tabIndex={-1}
+                  onClick={() => setShowPassword((s) => !s)}
                   aria-label={showPassword ? "Hide password" : "Show password"}
+                  className="absolute top-1/2 right-2.5 -translate-y-1/2 text-xs font-medium text-primary"
                 >
                   {showPassword ? "Hide" : "Show"}
                 </button>
               </div>
-            </label>
-            <label className={styles.field}>
-              <span className={styles.label}>Confirm password</span>
-              <input
-                className={styles.input}
+              {passwordForm.formState.errors.newPassword && (
+                <p className="text-sm text-destructive">
+                  {passwordForm.formState.errors.newPassword.message}
+                </p>
+              )}
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="confirm">Confirm password</Label>
+              <Input
+                id="confirm"
                 type={showPassword ? "text" : "password"}
-                value={confirm}
-                onChange={(e) => setConfirm(e.target.value)}
                 placeholder="Re-enter your new password"
                 autoComplete="new-password"
-                required
-                disabled={submitting}
+                aria-invalid={!!passwordForm.formState.errors.confirm}
+                {...passwordForm.register("confirm")}
               />
-            </label>
-            <button type="submit" className={styles.primary} disabled={submitting}>
-              {submitting ? "Updating…" : "Update password"}
-            </button>
+              {passwordForm.formState.errors.confirm && (
+                <p className="text-sm text-destructive">{passwordForm.formState.errors.confirm.message}</p>
+              )}
+            </div>
+            <Button type="submit" className="w-full" disabled={passwordForm.formState.isSubmitting}>
+              {passwordForm.formState.isSubmitting ? "Updating…" : "Update password"}
+            </Button>
           </form>
         </>
       )}
 
       {step === "done" && (
         <>
-          <h1 className={styles.title}>Password updated</h1>
-          <p className={styles.subtitle}>Your password has been changed. You can now sign in with it.</p>
-          <div className={styles.success} role="status">All set!</div>
-          <form
-            className={styles.form}
-            onSubmit={(e) => {
-              e.preventDefault();
-              router.push("/login");
-            }}
-          >
-            <button type="submit" className={styles.primary}>Back to sign in</button>
-          </form>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Password updated</h1>
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            Your password has been changed. You can now sign in with it.
+          </p>
+          <Button className="mt-6 w-full" onClick={() => router.push("/login")}>
+            Back to sign in
+          </Button>
         </>
       )}
     </div>

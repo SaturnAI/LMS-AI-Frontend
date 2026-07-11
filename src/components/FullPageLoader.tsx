@@ -1,10 +1,14 @@
-import styles from "./FullPageLoader.module.css";
+import { Loader2 } from "lucide-react";
 
 export default function FullPageLoader({ label = "Loading…" }: { label?: string }) {
   return (
-    <div className={styles.wrap} role="status" aria-live="polite">
-      <span className={styles.spinner} aria-hidden="true" />
-      <span className={styles.label}>{label}</span>
+    <div
+      className="flex min-h-screen flex-col items-center justify-center gap-3 bg-background"
+      role="status"
+      aria-live="polite"
+    >
+      <Loader2 className="size-8 animate-spin text-primary" aria-hidden />
+      <span className="text-sm text-muted-foreground">{label}</span>
     </div>
   );
 }
