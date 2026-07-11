@@ -1,5 +1,6 @@
 "use client";
 
+/** App-wide client providers: TanStack Query client + Sonner toaster. Mounted once in the root layout. */
 import { useState, type ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";

@@ -1,5 +1,6 @@
 "use client";
 
+/** Forgot-password stepper: email → OTP → new password. Rendered on: `/forgot-password`. */
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

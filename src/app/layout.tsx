@@ -1,3 +1,4 @@
+/** Root layout — fonts, global styles, and the app-wide `<Providers>`. Wraps every route. */
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";

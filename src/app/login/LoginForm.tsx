@@ -1,5 +1,6 @@
 "use client";
 
+/** Login form (React Hook Form + Zod + login mutation). Rendered on: `/login`. */
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
