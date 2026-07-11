@@ -1,0 +1,156 @@
+.page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr minmax(420px, 520px);
+}
+
+/* ---- Brand panel ---- */
+.brandPanel {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 3.25rem 3.125rem;
+  background: radial-gradient(120% 100% at 28% 0%, var(--color-bg-subtle) 0%, var(--color-bg-subtle-2) 100%);
+}
+
+.shape {
+  position: absolute;
+  border-radius: 26px;
+  z-index: 0;
+}
+.shapeBlue {
+  width: 150px;
+  height: 150px;
+  background: var(--color-sky);
+  top: -30px;
+  right: 60px;
+  opacity: 0.8;
+  animation: floatA 11s ease-in-out infinite;
+}
+.shapeLime {
+  width: 120px;
+  height: 120px;
+  background: var(--color-accent);
+  bottom: 70px;
+  right: -30px;
+  opacity: 0.75;
+  animation: floatB 13s ease-in-out infinite;
+}
+.shapeNavy {
+  width: 88px;
+  height: 88px;
+  background: var(--color-primary);
+  top: 150px;
+  left: -26px;
+  opacity: 0.9;
+  animation: floatB 9s ease-in-out infinite;
+}
+
+@keyframes floatA {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-22px);
+  }
+}
+@keyframes floatB {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(18px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shape {
+    animation: none;
+  }
+}
+
+.brand {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+.logo {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: var(--color-primary);
+}
+.logoMark {
+  width: 13px;
+  height: 13px;
+  background: var(--color-accent);
+  border-radius: 2px;
+  transform: rotate(45deg);
+}
+.brandName {
+  font-weight: 700;
+  font-size: 1.06rem;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+
+.brandCopy {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+}
+.tagline {
+  font-size: 2.5rem;
+  line-height: 1.08;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.95rem;
+  color: var(--color-text);
+}
+.blurb {
+  margin: 0;
+  font-size: 0.97rem;
+  line-height: 1.55;
+  max-width: 360px;
+  color: var(--color-text-muted);
+}
+
+.brandFoot {
+  position: relative;
+  z-index: 1;
+  margin-top: 2.15rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.01em;
+  color: color-mix(in srgb, var(--color-text) 45%, transparent);
+}
+
+/* ---- Form panel ---- */
+.formPanel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--color-surface);
+}
+
+@media (max-width: 860px) {
+  .page {
+    grid-template-columns: 1fr;
+  }
+  .brandPanel {
+    padding: 2.25rem 2rem;
+    min-height: 240px;
+  }
+  .tagline {
+    font-size: 1.9rem;
+  }
+  .blurb {
+    display: none;
+  }
+}

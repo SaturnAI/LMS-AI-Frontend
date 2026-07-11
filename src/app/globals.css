@@ -1,13 +1,49 @@
+/*
+ * Global design tokens — the single source of truth for the product's colour
+ * scheme. Components reference these via var(--token); never hardcode hex in
+ * component CSS so the whole product stays consistent.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  /* Brand */
+  --color-primary: #2c3a64;        /* navy — primary actions */
+  --color-primary-hover: #354577;
+  --color-primary-text: #ffffff;
+  --color-accent: #c3e8a0;         /* lime — highlights/logo */
+  --color-sky: #cfe4f7;            /* soft blue — decoration */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Surfaces */
+  --color-bg: #ffffff;
+  --color-bg-subtle: #f4f7fc;      /* brand-panel gradient (light) */
+  --color-bg-subtle-2: #e7edf6;    /* brand-panel gradient (deep) */
+  --color-surface: #ffffff;
+  --color-input-bg: #ffffff;
+
+  /* Text */
+  --color-text: #1e2a4d;           /* deep navy */
+  --color-text-muted: #5b6685;
+  --color-text-faint: #9aa4bd;
+
+  /* Lines */
+  --color-border: #dce6f5;
+  --color-border-hover: #c6d3ea;
+  --color-divider: #e4ebf5;
+
+  /* Feedback */
+  --color-error-bg: #fef2f2;
+  --color-error-border: #f5c2c2;
+  --color-error-text: #b42318;
+  --color-success-bg: #f0fdf4;
+  --color-success-border: #bbf7d0;
+  --color-success-text: #15803d;
+
+  /* Effects & shape */
+  --focus-ring: 0 0 0 3px rgba(44, 58, 100, 0.15);
+  --radius: 10px;
+  --radius-lg: 14px;
+
+  /* Base aliases (kept so generic elements resolve to the scheme) */
+  --background: var(--color-bg);
+  --foreground: var(--color-text);
 }
 
 * {
@@ -29,6 +65,11 @@ body {
   line-height: 1.6;
 }
 
+a {
+  color: inherit;
+}
+
+/* Placeholder home page helper */
 .container {
   min-height: 100vh;
   display: flex;
@@ -39,12 +80,10 @@ body {
   padding: 2rem;
   text-align: center;
 }
-
 .container h1 {
   font-size: 3rem;
 }
-
 .container p {
-  color: #888;
+  color: var(--color-text-muted);
   max-width: 36rem;
 }
