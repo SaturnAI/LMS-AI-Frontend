@@ -1,7 +1,6 @@
 "use client";
 
 /** KPI card: super-admin count. Rendered on super_admin `/dashboard`. */
-import { ShieldCheck } from "lucide-react";
 import { useSuperAdmins } from "@/hooks/use-super-admins";
 import { KpiCard } from "../KpiCard";
 
@@ -14,7 +13,6 @@ export function SuperAdminsKpi() {
     <KpiCard
       label="Super admins"
       value={total}
-      icon={ShieldCheck}
       hint={disabled > 0 ? `${disabled} disabled` : undefined}
       loading={isPending}
       error={isError}

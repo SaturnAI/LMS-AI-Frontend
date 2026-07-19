@@ -1,6 +1,6 @@
 "use client";
 
-/** Navigation link list with active-state highlighting. Used by the desktop & mobile sidebars. */
+/** Navigation link list with an active white "pill". Used by the desktop & mobile sidebars. */
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { NavItem } from "@/lib/navigation";
@@ -26,10 +26,10 @@ export function SidebarNav({ items, onNavigate }: SidebarNavProps) {
             onClick={onNavigate}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+              "flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-colors",
               active
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                ? "bg-card text-foreground shadow-sm"
+                : "text-muted-foreground hover:bg-card/60 hover:text-foreground",
             )}
           >
             <Icon className="size-4" />

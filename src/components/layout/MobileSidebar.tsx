@@ -21,9 +21,9 @@ export function MobileSidebar({ profile }: { profile: Profile }) {
       >
         <Menu className="size-5" />
       </SheetTrigger>
-      <SheetContent side="left" className="w-72 p-0">
+      <SheetContent side="left" className="w-72 bg-muted p-0">
         <SheetTitle className="sr-only">Navigation</SheetTitle>
-        <div className="flex h-16 items-center border-b px-5">
+        <div className="flex h-16 items-center px-6">
           <Brand />
         </div>
         <SidebarNav items={items} onNavigate={() => setOpen(false)} />

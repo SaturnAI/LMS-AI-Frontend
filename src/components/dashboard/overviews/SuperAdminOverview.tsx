@@ -1,15 +1,18 @@
 "use client";
 
-/** super_admin dashboard: platform KPIs + recent companies. Rendered on `/dashboard`. */
+/** super_admin dashboard: platform KPIs + searchable companies board. Rendered on `/dashboard`. */
+import Link from "next/link";
+import { Plus } from "lucide-react";
 import type { Profile } from "@/lib/api";
 import { ROUTES } from "@/lib/constants";
 import { firstName } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 import { PageHeader } from "@/components/common/PageHeader";
 import { KpiGrid } from "../KpiGrid";
 import { CompaniesKpis } from "../kpis/CompaniesKpis";
 import { SuperAdminsKpi } from "../kpis/SuperAdminsKpi";
-import { QuickActions } from "../QuickActions";
-import { RecentCompaniesCard } from "../RecentCompaniesCard";
+import { TotalSeatsKpi } from "../kpis/TotalSeatsKpi";
+import { CompaniesBoard } from "../CompaniesBoard";
 
 export function SuperAdminOverview({ profile }: { profile: Profile }) {
   return (
@@ -18,19 +21,24 @@ export function SuperAdminOverview({ profile }: { profile: Profile }) {
         title={`Welcome back, ${firstName(profile.name)}`}
         description="Platform overview — companies and administrators."
         actions={
-          <QuickActions
-            actions={[
-              { label: "Add company", href: ROUTES.companies },
-              { label: "Add super admin", href: ROUTES.superAdmins },
-            ]}
-          />
+          <div className="flex flex-wrap gap-2">
+            <Link href={ROUTES.superAdmins} className={buttonVariants({ variant: "outline", size: "sm" })}>
+              <Plus className="size-4" />
+              Super admin
+            </Link>
+            <Link href={ROUTES.companies} className={buttonVariants({ size: "sm" })}>
+              <Plus className="size-4" />
+              Add company
+            </Link>
+          </div>
         }
       />
       <KpiGrid>
         <CompaniesKpis />
         <SuperAdminsKpi />
+        <TotalSeatsKpi />
       </KpiGrid>
-      <RecentCompaniesCard />
+      <CompaniesBoard />
     </div>
   );
 }

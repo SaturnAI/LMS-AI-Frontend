@@ -1,15 +1,15 @@
-/** Top app bar: mobile menu trigger, tenant-context bar, user menu. Rendered by the `(app)` layout. */
+/** Mobile top bar (hidden on desktop, where nav + user live in the sidebar). */
 import type { Profile } from "@/lib/api";
+import { Brand } from "./Brand";
 import { MobileSidebar } from "./MobileSidebar";
-import { TenantContextBar } from "./TenantContextBar";
 import { UserMenu } from "./UserMenu";
 
 export function AppHeader({ profile }: { profile: Profile }) {
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b bg-card px-4 lg:px-6">
+    <header className="flex h-14 items-center justify-between gap-3 border-b bg-card px-4 lg:hidden">
       <div className="flex items-center gap-2">
         <MobileSidebar profile={profile} />
-        <TenantContextBar profile={profile} />
+        <Brand />
       </div>
       <UserMenu profile={profile} />
     </header>
