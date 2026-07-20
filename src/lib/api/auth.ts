@@ -1,4 +1,4 @@
-import { API_BASE_URL, apiGet, apiPost } from "./client";
+import { API_BASE_URL, apiDelete, apiGet, apiPost, apiPostForm } from "./client";
 
 export type UserRole = "super_admin" | "company_admin" | "employee";
 export type PermissionLevel = "view" | "edit" | "not_allowed";
@@ -75,3 +75,42 @@ export const updatePassword = async (email: string, new_password: string): Promi
  * 302-redirects to Google). Never call via fetch/XHR.
  */
 export const googleLoginUrl = `${API_BASE_URL}/google/start`;
+
+export interface UpdateUserProfileInput {
+  name?: string;
+  phone_number?: string;
+  designation?: string;
+}
+
+/** Update the signed-in user's own profile details (all fields optional). */
+export async function updateUserProfile(input: UpdateUserProfileInput): Promise<{ message: string }> {
+  const res = await apiPost<{ message: string }>("/update_user_profile", input);
+  if (!res.ok) throw new Error(res.message);
+  return { message: res.message };
+}
+
+/** Change password while logged in (requires knowing the current one). */
+export async function changePassword(oldPassword: string, newPassword: string): Promise<{ message: string }> {
+  const res = await apiPost<{ message: string }>("/change_password", {
+    old_password: oldPassword,
+    new_password: newPassword,
+  });
+  if (!res.ok) throw new Error(res.message);
+  return { message: res.message };
+}
+
+/** Upload/replace the profile picture. JPEG/PNG only, ≤2MB. */
+export async function updateProfilePicture(file: File): Promise<{ message: string }> {
+  const res = await apiPostForm<{ message: string }>("/update_profile_picture", { profile_picture: file });
+  if (!res.ok) throw new Error(res.message);
+  return { message: res.message };
+}
+
+export async function deleteProfilePicture(): Promise<{ message: string }> {
+  const res = await apiDelete<{ message: string }>("/delete_profile_picture");
+  if (!res.ok) throw new Error(res.message);
+  return { message: res.message };
+}
+
+/** Streams the user's picture on success, or a JSON 404 when absent — use as an <img src> with an onError fallback. */
+export const profilePictureUrl = `${API_BASE_URL}/fetch_profile_picture`;

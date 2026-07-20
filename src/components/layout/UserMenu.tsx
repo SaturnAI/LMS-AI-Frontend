@@ -3,7 +3,7 @@
 /** User avatar dropdown (account, sign out). Compact in the mobile header; expanded in the sidebar footer. */
 import { useRouter } from "next/navigation";
 import { LogOut, User } from "lucide-react";
-import { API_BASE_URL, type Profile } from "@/lib/api";
+import { profilePictureUrl, type Profile } from "@/lib/api";
 import { useLogout } from "@/hooks/use-auth";
 import { ROUTES } from "@/lib/constants";
 import { cn, initials, roleLabel } from "@/lib/utils";
@@ -38,7 +38,7 @@ export function UserMenu({ profile, expanded = false }: { profile: Profile; expa
       >
         <Avatar>
           {/* fetch_profile_picture 404s when absent → Base UI falls back to initials */}
-          <AvatarImage src={`${API_BASE_URL}/fetch_profile_picture`} alt={profile.name} />
+          <AvatarImage src={profilePictureUrl} alt={profile.name} />
           <AvatarFallback className="bg-brand-lime text-brand-navy">{initials(profile.name)}</AvatarFallback>
         </Avatar>
         {expanded && (

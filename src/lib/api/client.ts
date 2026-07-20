@@ -53,6 +53,28 @@ export function apiPost<T>(path: string, body: unknown): Promise<ApiResponse<T>>
   });
 }
 
+/**
+ * POST multipart/form-data. Do NOT set Content-Type manually — the browser
+ * adds the multipart boundary. `fields` are stringified except File/Blob
+ * values (sent as-is) and undefined/null (omitted).
+ */
+export function apiPostForm<T>(path: string, fields: object): Promise<ApiResponse<T>> {
+  const form = new FormData();
+  for (const [key, value] of Object.entries(fields as Record<string, unknown>)) {
+    if (value === undefined || value === null || value === "") continue;
+    if (value instanceof Blob) {
+      form.append(key, value);
+    } else {
+      form.append(key, String(value));
+    }
+  }
+  return request<T>(path, { method: "POST", body: form });
+}
+
+export function apiDelete<T>(path: string): Promise<ApiResponse<T>> {
+  return request<T>(path, { method: "DELETE" });
+}
+
 /** Unwrap a read/list response for query hooks — returns data or throws the server message. */
 export function unwrap<T>(res: ApiResponse<T>): T {
   if (!res.ok || res.data === null) throw new Error(res.message || "Request failed.");
