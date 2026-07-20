@@ -5,7 +5,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Building2 } from "lucide-react";
+import { Building2, Pencil } from "lucide-react";
 import { RequireAccess } from "@/components/common/RequireAccess";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -51,7 +51,23 @@ function CompanyProfileContent() {
   const auth = useAuth();
   const updateMutation = useUpdateCompanyProfile();
   const [logo, setLogo] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [logoBroken, setLogoBroken] = useState(false);
+
+  function handleSelectLogo(file: File | undefined) {
+    setLogo(file ?? null);
+    setLogoPreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return file ? URL.createObjectURL(file) : null;
+    });
+  }
+
+  useEffect(() => {
+    return () => {
+      if (logoPreview) URL.revokeObjectURL(logoPreview);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- cleanup-only, runs on unmount
+  }, []);
 
   const {
     register,
@@ -82,8 +98,15 @@ function CompanyProfileContent() {
       <PageHeader title="Company Profile" description="Update your company's details and logo." />
 
       <div className="flex items-center gap-4 rounded-2xl border bg-card p-4">
-        <div className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-xl bg-muted">
-          {logoBroken ? (
+        <label
+          htmlFor="company-logo"
+          aria-label="Change company logo"
+          className="group relative grid size-16 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-xl bg-muted"
+        >
+          {logoPreview ? (
+            // eslint-disable-next-line @next/next/no-img-element -- local object URL preview of the selected file
+            <img src={logoPreview} alt="Company logo" className="size-16 object-cover" />
+          ) : logoBroken ? (
             <Building2 className="size-7 text-muted-foreground" />
           ) : (
             // eslint-disable-next-line @next/next/no-img-element -- credentialed, dynamic backend image; not a static asset
@@ -94,17 +117,22 @@ function CompanyProfileContent() {
               onError={() => setLogoBroken(true)}
             />
           )}
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="company-logo">Company logo</Label>
-          <Input
+          <span className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all group-hover:bg-black/40 group-hover:opacity-100">
+            <Pencil className="size-5 text-white" />
+          </span>
+          <input
             id="company-logo"
             type="file"
             accept="image/jpeg,image/png"
-            className="max-w-xs"
-            onChange={(e) => setLogo(e.target.files?.[0] ?? null)}
+            className="sr-only"
+            onChange={(e) => handleSelectLogo(e.target.files?.[0])}
           />
-          <p className="text-xs text-muted-foreground">JPEG or PNG, up to 2MB. Saved with the form below.</p>
+        </label>
+        <div className="flex flex-col gap-1.5">
+          <p className="text-sm font-medium text-foreground">Company logo</p>
+          <p className="text-xs text-muted-foreground">
+            Click the logo to choose a new image. JPEG or PNG, up to 2MB — saved with the form below.
+          </p>
         </div>
       </div>
 

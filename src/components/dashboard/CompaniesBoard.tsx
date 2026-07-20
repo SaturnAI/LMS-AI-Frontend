@@ -55,7 +55,7 @@ export function CompaniesBoard() {
                 type="button"
                 onClick={() => setSort(key)}
                 className={cn(
-                  "rounded-md px-3 py-1 text-sm font-medium capitalize transition-colors",
+                  "cursor-pointer rounded-md px-3 py-1 text-sm font-medium capitalize transition-colors",
                   sort === key ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
                 )}
               >

@@ -37,7 +37,7 @@ export function TenantContextBar({ profile }: { profile: Profile }) {
         onClick={handleExit}
         disabled={exitCompany.isPending}
         aria-label="Exit company context"
-        className="inline-flex size-5 items-center justify-center rounded-full hover:bg-black/5 disabled:opacity-50"
+        className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full hover:bg-black/5 disabled:cursor-not-allowed disabled:opacity-50"
       >
         <X className="size-3" />
       </button>

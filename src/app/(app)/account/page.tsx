@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { User } from "lucide-react";
+import { Pencil, User } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
   useChangePassword,
@@ -64,7 +64,11 @@ function ProfilePictureSection() {
 
   return (
     <section className="flex items-center gap-4 rounded-2xl border bg-card p-5">
-      <div className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-full bg-muted">
+      <label
+        htmlFor="profile-picture"
+        aria-label="Change profile picture"
+        className="group relative grid size-16 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-full bg-muted"
+      >
         {broken ? (
           <User className="size-7 text-muted-foreground" />
         ) : (
@@ -76,23 +80,26 @@ function ProfilePictureSection() {
             onError={() => setBroken(true)}
           />
         )}
-      </div>
+        <span className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all group-hover:bg-black/40 group-hover:opacity-100">
+          <Pencil className="size-5 text-white" />
+        </span>
+        <input
+          id="profile-picture"
+          type="file"
+          accept="image/jpeg,image/png"
+          className="sr-only"
+          disabled={upload.isPending}
+          onChange={(e) => handleUpload(e.target.files?.[0])}
+        />
+      </label>
       <div className="flex flex-col gap-2">
-        <Label htmlFor="profile-picture">Profile picture</Label>
+        <p className="text-sm font-medium text-foreground">Profile picture</p>
         <div className="flex items-center gap-2">
-          <Input
-            id="profile-picture"
-            type="file"
-            accept="image/jpeg,image/png"
-            className="max-w-xs"
-            disabled={upload.isPending}
-            onChange={(e) => handleUpload(e.target.files?.[0])}
-          />
           <Button type="button" variant="outline" size="sm" onClick={handleDelete} disabled={remove.isPending || broken}>
             Remove
           </Button>
         </div>
-        <p className="text-xs text-muted-foreground">JPEG or PNG, up to 2MB.</p>
+        <p className="text-xs text-muted-foreground">Click the picture to upload. JPEG or PNG, up to 2MB.</p>
       </div>
     </section>
   );
