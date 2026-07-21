@@ -1,3 +1,4 @@
+/** Split-screen shell (brand panel + form slot). Rendered on `/login` and `/forgot-password`. */
 import type { ReactNode } from "react";
 
 /**

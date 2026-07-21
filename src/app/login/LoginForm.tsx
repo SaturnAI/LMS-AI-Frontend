@@ -1,5 +1,6 @@
 "use client";
 
+/** Login form (React Hook Form + Zod + login mutation). Rendered on: `/login`. */
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -88,7 +89,7 @@ export default function LoginForm() {
               tabIndex={-1}
               onClick={() => setShowPassword((s) => !s)}
               aria-label={showPassword ? "Hide password" : "Show password"}
-              className="absolute top-1/2 right-2.5 -translate-y-1/2 text-xs font-medium text-primary"
+              className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer text-xs font-medium text-primary"
             >
               {showPassword ? "Hide" : "Show"}
             </button>

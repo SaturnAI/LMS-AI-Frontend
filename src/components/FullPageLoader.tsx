@@ -1,3 +1,4 @@
+/** Centered full-screen spinner. Shown by auth gates while the session resolves. */
 import { Loader2 } from "lucide-react";
 
 export default function FullPageLoader({ label = "Loading…" }: { label?: string }) {

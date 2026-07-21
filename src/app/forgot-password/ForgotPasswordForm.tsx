@@ -1,5 +1,6 @@
 "use client";
 
+/** Forgot-password stepper: email → OTP → new password. Rendered on: `/forgot-password`. */
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -171,11 +172,15 @@ export default function ForgotPasswordForm() {
                 setInfo(null);
                 setStep("email");
               }}
-              className="font-medium text-primary hover:underline"
+              className="cursor-pointer font-medium text-primary hover:underline"
             >
               ← Change email
             </button>
-            <button type="button" onClick={resend} className="font-medium text-primary hover:underline">
+            <button
+              type="button"
+              onClick={resend}
+              className="cursor-pointer font-medium text-primary hover:underline"
+            >
               Resend code
             </button>
           </div>
@@ -210,7 +215,7 @@ export default function ForgotPasswordForm() {
                   tabIndex={-1}
                   onClick={() => setShowPassword((s) => !s)}
                   aria-label={showPassword ? "Hide password" : "Show password"}
-                  className="absolute top-1/2 right-2.5 -translate-y-1/2 text-xs font-medium text-primary"
+                  className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer text-xs font-medium text-primary"
                 >
                   {showPassword ? "Hide" : "Show"}
                 </button>

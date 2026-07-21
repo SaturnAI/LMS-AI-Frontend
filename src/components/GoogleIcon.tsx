@@ -1,3 +1,4 @@
+/** Google "G" logo SVG. Used by the "Continue with Google" button on `/login`. */
 export default function GoogleIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 18 18" aria-hidden="true">

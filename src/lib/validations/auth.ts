@@ -1,3 +1,4 @@
+/** Zod schemas + inferred types for the auth forms (login + forgot-password steps). */
 import { z } from "zod";
 
 export const loginSchema = z.object({

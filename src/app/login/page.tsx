@@ -1,5 +1,6 @@
 "use client";
 
+/** Route: `/login` — email/password + Google sign-in. Redirects to `/dashboard` if already authed. */
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";

@@ -1,5 +1,6 @@
 "use client";
 
+/** Auth hooks: `useAuth` (get_profile query) + `useLogin` / `useLogout` mutations. */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getProfile, login, logout, type Profile } from "@/lib/api";
 

@@ -1,5 +1,6 @@
 "use client";
 
+/** Route: `/` — auth gate. Redirects to `/dashboard` when signed in, else `/login`. */
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
