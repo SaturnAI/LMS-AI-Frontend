@@ -4,7 +4,7 @@
 // sends `credentials: "include"`. Responses follow the envelope
 // `{ is_successful, message, ...data }`; `request` normalises that into a
 // discriminated `ApiResponse`.
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5015/api";
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export interface ApiResponse<T> {
   ok: boolean;
