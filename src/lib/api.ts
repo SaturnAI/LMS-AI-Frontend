@@ -5,7 +5,7 @@
 // HttpOnly `auth_token` cookie to travel, and the frontend origin must be
 // allow-listed in the backend CORS config.
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5015/api";
+  process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export type UserRole = "super_admin" | "company_admin" | "employee";
 export type PermissionLevel = "view" | "edit" | "not_allowed";
