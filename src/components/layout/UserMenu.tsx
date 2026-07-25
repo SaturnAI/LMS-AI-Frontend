@@ -36,7 +36,7 @@ export function UserMenu({ profile, expanded = false }: { profile: Profile; expa
             : "rounded-full",
         )}
       >
-        <Avatar>
+        <Avatar size={expanded ? "default" : "lg"} className={expanded ? undefined : "lg:size-11"}>
           {/* fetch_profile_picture 404s when absent → Base UI falls back to initials */}
           <AvatarImage src={profilePictureUrl} alt={profile.name} />
           <AvatarFallback className="bg-brand-lime text-brand-navy">{initials(profile.name)}</AvatarFallback>
@@ -49,9 +49,15 @@ export function UserMenu({ profile, expanded = false }: { profile: Profile; expa
         )}
       </DropdownMenuTrigger>
       <DropdownMenuContent align={expanded ? "start" : "end"} side={expanded ? "top" : "bottom"} className="w-56">
-        <div className="flex flex-col px-2 py-1.5">
-          <span className="truncate text-sm font-medium">{profile.name}</span>
-          <span className="truncate text-xs text-muted-foreground">{roleLabel(profile.role)}</span>
+        <div className="flex items-center gap-2.5 px-2 py-1.5">
+          <Avatar>
+            <AvatarImage src={profilePictureUrl} alt={profile.name} />
+            <AvatarFallback className="bg-brand-lime text-brand-navy">{initials(profile.name)}</AvatarFallback>
+          </Avatar>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-medium">{profile.name}</p>
+            <p className="truncate text-xs text-muted-foreground">{roleLabel(profile.role)}</p>
+          </div>
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => router.push(ROUTES.account)}>
