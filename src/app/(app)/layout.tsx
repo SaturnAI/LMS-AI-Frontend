@@ -27,15 +27,17 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(1100px_600px_at_100%_0%,#dbe7f8_0%,#eaf0f8_45%,#f3f6fb_100%)] lg:p-3">
-      <div className="flex min-h-screen overflow-hidden bg-card lg:min-h-[calc(100vh-1.5rem)] lg:rounded-3xl lg:border lg:shadow-sm">
+    <div className="h-screen overflow-hidden bg-[radial-gradient(1100px_600px_at_100%_0%,#dbe7f8_0%,#eaf0f8_45%,#f3f6fb_100%)] lg:p-3">
+      <div className="flex h-full overflow-hidden bg-card lg:h-[calc(100vh-1.5rem)] lg:rounded-3xl lg:border lg:shadow-sm">
         <AppSidebar profile={auth.profile} />
-        <div className="flex min-w-0 flex-1 flex-col">
+        <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
           <AppHeader profile={auth.profile} />
-          <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-8">
-            <TenantContextBar profile={auth.profile} />
-            {children}
-          </main>
+          <div className="flex-1 overflow-y-auto">
+            <main className="mx-auto flex w-full max-w-6xl flex-col gap-4 p-4 lg:gap-6 lg:p-8">
+              <TenantContextBar profile={auth.profile} />
+              {children}
+            </main>
+          </div>
         </div>
       </div>
     </div>

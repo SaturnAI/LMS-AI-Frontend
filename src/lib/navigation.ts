@@ -4,6 +4,7 @@ import {
   Building2,
   Contact,
   LayoutDashboard,
+  NotebookText,
   ScrollText,
   ShieldCheck,
   Users,
@@ -20,13 +21,14 @@ export interface NavItem {
 }
 
 const DASHBOARD: NavItem = { key: "dashboard", label: "Dashboard", href: ROUTES.dashboard, icon: LayoutDashboard };
+const NOTES: NavItem = { key: "notes", label: "Notes", href: ROUTES.notes, icon: NotebookText };
 const LEADS: NavItem = { key: "leads", label: "Leads", href: ROUTES.leads, icon: Contact };
 const EMPLOYEES: NavItem = { key: "employees", label: "Employees", href: ROUTES.employees, icon: Users };
 const LOGS: NavItem = { key: "logs", label: "Activity Logs", href: ROUTES.logs, icon: ScrollText };
 
 /** Sidebar items for the current user, filtered by role + permission + tenant context. */
 export function buildNavigation(profile: Profile): NavItem[] {
-  const items: NavItem[] = [DASHBOARD];
+  const items: NavItem[] = [DASHBOARD, NOTES];
 
   if (isSuperAdmin(profile)) {
     items.push({ key: "companies", label: "Companies", href: ROUTES.companies, icon: Building2 });

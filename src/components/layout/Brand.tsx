@@ -2,13 +2,13 @@
 import Link from "next/link";
 import { ROUTES } from "@/lib/constants";
 
-export function Brand() {
+export function Brand({ collapsed = false }: { collapsed?: boolean }) {
   return (
     <Link href={ROUTES.dashboard} className="flex items-center gap-2.5">
-      <span className="grid size-8 place-items-center rounded-[9px] bg-brand-navy">
+      <span className="grid size-8 shrink-0 place-items-center rounded-[9px] bg-brand-navy">
         <span className="size-2.5 rotate-45 rounded-[2px] bg-brand-lime" />
       </span>
-      <span className="font-bold tracking-tight text-foreground">LMS AI</span>
+      {!collapsed && <span className="font-bold tracking-tight text-foreground">LMS AI</span>}
     </Link>
   );
 }

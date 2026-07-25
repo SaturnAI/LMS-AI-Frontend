@@ -57,9 +57,10 @@ describe("buildNavigation", () => {
   const keys = (p: Profile) => buildNavigation(p).map((i) => i.key);
 
   it("super_admin sees platform nav, tenant nav only in a company context", () => {
-    expect(keys(makeProfile("super_admin"))).toEqual(["dashboard", "companies", "super-admins"]);
+    expect(keys(makeProfile("super_admin"))).toEqual(["dashboard", "notes", "companies", "super-admins"]);
     expect(keys(makeProfile("super_admin", { tenant_id: "C1" }))).toEqual([
       "dashboard",
+      "notes",
       "companies",
       "super-admins",
       "leads",
@@ -71,6 +72,7 @@ describe("buildNavigation", () => {
   it("company_admin sees all tenant modules plus company profile", () => {
     expect(keys(makeProfile("company_admin", { tenant_id: "C1" }))).toEqual([
       "dashboard",
+      "notes",
       "leads",
       "employees",
       "logs",
@@ -80,6 +82,6 @@ describe("buildNavigation", () => {
 
   it("employee only sees permitted modules", () => {
     const p = employeePerms({ leads: "view", employee_master: "not_allowed", log_manager: "view" });
-    expect(keys(p)).toEqual(["dashboard", "leads", "logs"]);
+    expect(keys(p)).toEqual(["dashboard", "notes", "leads", "logs"]);
   });
 });

@@ -1,22 +1,70 @@
-/** Persistent desktop sidebar (hidden below lg): brand, nav, and the user menu footer. */
+"use client";
+
+/** Persistent desktop sidebar (hidden below lg): brand, nav, and the user menu footer. Collapsible to an icon rail. */
+import { useEffect, useState } from "react";
+import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import type { Profile } from "@/lib/api";
 import { buildNavigation } from "@/lib/navigation";
+import { cn } from "@/lib/utils";
 import { Brand } from "./Brand";
 import { SidebarNav } from "./SidebarNav";
 import { UserMenu } from "./UserMenu";
 
+const STORAGE_KEY = "lms-ai:sidebar-collapsed";
+
 export function AppSidebar({ profile }: { profile: Profile }) {
   const items = buildNavigation(profile);
+  const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    setCollapsed(localStorage.getItem(STORAGE_KEY) === "1");
+  }, []);
+
+  function toggle() {
+    setCollapsed((prev) => {
+      const next = !prev;
+      localStorage.setItem(STORAGE_KEY, next ? "1" : "0");
+      return next;
+    });
+  }
+
   return (
-    <aside className="hidden w-60 shrink-0 flex-col bg-muted lg:flex">
-      <div className="flex h-16 items-center px-6">
-        <Brand />
+    <aside
+      className={cn(
+        "hidden h-full shrink-0 flex-col bg-muted transition-[width] duration-150 lg:flex",
+        collapsed ? "w-[76px]" : "w-60",
+      )}
+    >
+      <div className={cn("flex h-16 shrink-0 items-center", collapsed ? "justify-center px-2" : "justify-between px-6")}>
+        <Brand collapsed={collapsed} />
+        {!collapsed && (
+          <button
+            type="button"
+            onClick={toggle}
+            aria-label="Collapse sidebar"
+            className="inline-flex size-7 cursor-pointer items-center justify-center rounded-md text-muted-foreground hover:bg-card/60 hover:text-foreground"
+          >
+            <PanelLeftClose className="size-4" />
+          </button>
+        )}
       </div>
+
+      {collapsed && (
+        <button
+          type="button"
+          onClick={toggle}
+          aria-label="Expand sidebar"
+          className="mx-auto mb-1 inline-flex size-7 cursor-pointer items-center justify-center rounded-md text-muted-foreground hover:bg-card/60 hover:text-foreground"
+        >
+          <PanelLeftOpen className="size-4" />
+        </button>
+      )}
+
       <div className="flex-1 overflow-y-auto">
-        <SidebarNav items={items} />
+        <SidebarNav items={items} collapsed={collapsed} />
       </div>
-      <div className="p-3">
-        <UserMenu profile={profile} expanded />
+      <div className={cn("shrink-0 p-3", collapsed && "flex justify-center px-2")}>
+        <UserMenu profile={profile} expanded={!collapsed} />
       </div>
     </aside>
   );
