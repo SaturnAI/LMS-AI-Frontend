@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { FormField } from "@/components/common/FormField";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAddCompany, useUpdateCompany } from "@/hooks/use-companies";
 import { companySchema, type CompanyValues } from "@/lib/validations/company";
@@ -115,7 +115,7 @@ export function CompanyFormDialog({ open, onOpenChange, editing }: CompanyFormDi
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[85vh] max-w-lg overflow-y-auto sm:max-w-lg">
+      <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{isEdit ? "Edit company" : "Add company"}</DialogTitle>
           <DialogDescription>
@@ -125,42 +125,51 @@ export function CompanyFormDialog({ open, onOpenChange, editing }: CompanyFormDi
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Legal name" error={errors.legal_name?.message}>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-6">
+          <FormSection title="Basic info">
+            <FormField label="Legal name" error={errors.legal_name?.message}>
               <Input disabled={isSubmitting} {...register("legal_name")} />
-            </Field>
-            <Field label="Contact name" error={errors.name?.message}>
+            </FormField>
+            <FormField label="Contact name" error={errors.name?.message}>
               <Input disabled={isSubmitting} {...register("name")} />
-            </Field>
-            <Field label="Email" error={errors.email?.message}>
+            </FormField>
+            <FormField label="Email" error={errors.email?.message}>
               <Input type="email" disabled={isEdit || isSubmitting} {...register("email")} />
-            </Field>
-            <Field label="Phone number" error={errors.phone_number?.message}>
+            </FormField>
+            <FormField label="Phone number" error={errors.phone_number?.message}>
               <Input disabled={isSubmitting} {...register("phone_number")} />
-            </Field>
-            <Field label="Address" error={errors.address_1?.message} className="sm:col-span-2">
+            </FormField>
+            <FormField label="Designation (optional)">
+              <Input disabled={isSubmitting} {...register("designation")} />
+            </FormField>
+          </FormSection>
+
+          <FormSection title="Address">
+            <FormField label="Address" error={errors.address_1?.message} className="sm:col-span-2">
               <Input disabled={isSubmitting} {...register("address_1")} />
-            </Field>
-            <Field label="Address line 2 (optional)" className="sm:col-span-2">
+            </FormField>
+            <FormField label="Address line 2 (optional)" className="sm:col-span-2">
               <Input disabled={isSubmitting} {...register("address_2")} />
-            </Field>
-            <Field label="City" error={errors.city?.message}>
+            </FormField>
+            <FormField label="City" error={errors.city?.message}>
               <Input disabled={isSubmitting} {...register("city")} />
-            </Field>
-            <Field label="State" error={errors.state?.message}>
+            </FormField>
+            <FormField label="State" error={errors.state?.message}>
               <Input disabled={isSubmitting} {...register("state")} />
-            </Field>
-            <Field label="Country" error={errors.country?.message}>
+            </FormField>
+            <FormField label="Country" error={errors.country?.message}>
               <Input disabled={isSubmitting} {...register("country")} />
-            </Field>
-            <Field label="Pincode" error={errors.pincode?.message}>
+            </FormField>
+            <FormField label="Pincode" error={errors.pincode?.message}>
               <Input disabled={isSubmitting} {...register("pincode")} />
-            </Field>
-            <Field label="Employee limit" error={errors.employee_limit?.message}>
+            </FormField>
+          </FormSection>
+
+          <FormSection title="Business details">
+            <FormField label="Employee limit" error={errors.employee_limit?.message}>
               <Input inputMode="numeric" disabled={isSubmitting} {...register("employee_limit")} />
-            </Field>
-            <Field label="Billing plan">
+            </FormField>
+            <FormField label="Billing plan">
               <Select
                 value={billingPlan}
                 onValueChange={(v) => setValue("billing_plan", v as BillingPlan)}
@@ -175,37 +184,34 @@ export function CompanyFormDialog({ open, onOpenChange, editing }: CompanyFormDi
                   <SelectItem value="enterprise">Enterprise</SelectItem>
                 </SelectContent>
               </Select>
-            </Field>
-            <Field label="Industry (optional)">
+            </FormField>
+            <FormField label="Industry (optional)">
               <Input disabled={isSubmitting} {...register("industry")} />
-            </Field>
-            <Field label="Company size (optional)">
+            </FormField>
+            <FormField label="Company size (optional)">
               <Input disabled={isSubmitting} {...register("company_size")} />
-            </Field>
-            <Field label="Website (optional)">
+            </FormField>
+            <FormField label="Website (optional)">
               <Input disabled={isSubmitting} {...register("website")} />
-            </Field>
-            <Field label="Mobile number (optional)">
+            </FormField>
+            <FormField label="Mobile number (optional)">
               <Input disabled={isSubmitting} {...register("mobile_number")} />
-            </Field>
-            <Field label="GST number (optional)">
+            </FormField>
+            <FormField label="GST number (optional)">
               <Input disabled={isSubmitting} {...register("gst_number")} />
-            </Field>
-            <Field label="PAN number (optional)">
+            </FormField>
+            <FormField label="PAN number (optional)">
               <Input disabled={isSubmitting} {...register("pan_number")} />
-            </Field>
-            <Field label="Designation (optional)">
-              <Input disabled={isSubmitting} {...register("designation")} />
-            </Field>
-            <Field label="Company logo (optional, JPEG/PNG, ≤2MB)" className="sm:col-span-2">
+            </FormField>
+            <FormField label="Company logo (optional, JPEG/PNG, ≤2MB)" className="sm:col-span-2">
               <Input
                 type="file"
                 accept="image/jpeg,image/png"
                 disabled={isSubmitting}
                 onChange={(e) => setLogo(e.target.files?.[0] ?? null)}
               />
-            </Field>
-          </div>
+            </FormField>
+          </FormSection>
 
           <DialogFooter>
             <Button type="submit" disabled={isSubmitting}>
@@ -218,22 +224,11 @@ export function CompanyFormDialog({ open, onOpenChange, editing }: CompanyFormDi
   );
 }
 
-function Field({
-  label,
-  error,
-  className,
-  children,
-}: {
-  label: string;
-  error?: string;
-  className?: string;
-  children: ReactNode;
-}) {
+function FormSection({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div className={`flex flex-col gap-1.5 ${className ?? ""}`}>
-      <Label>{label}</Label>
-      {children}
-      {error && <p className="text-sm text-destructive">{error}</p>}
+    <div className="flex flex-col gap-4">
+      <h3 className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">{title}</h3>
+      <div className="grid gap-4 sm:grid-cols-2">{children}</div>
     </div>
   );
 }

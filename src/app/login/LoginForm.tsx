@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/common/PasswordInput";
 import GoogleIcon from "@/components/GoogleIcon";
 import { useLogin } from "@/hooks/use-auth";
 import { googleLoginUrl } from "@/lib/api";
@@ -16,7 +17,6 @@ import { loginSchema, type LoginValues } from "@/lib/validations/auth";
 export default function LoginForm() {
   const router = useRouter();
   const loginMutation = useLogin();
-  const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
   const {
@@ -74,26 +74,14 @@ export default function LoginForm() {
 
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="password">Password</Label>
-          <div className="relative">
-            <Input
-              id="password"
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter your password"
-              autoComplete="current-password"
-              aria-invalid={!!errors.password}
-              disabled={isSubmitting}
-              {...register("password")}
-            />
-            <button
-              type="button"
-              tabIndex={-1}
-              onClick={() => setShowPassword((s) => !s)}
-              aria-label={showPassword ? "Hide password" : "Show password"}
-              className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer text-xs font-medium text-primary"
-            >
-              {showPassword ? "Hide" : "Show"}
-            </button>
-          </div>
+          <PasswordInput
+            id="password"
+            placeholder="Enter your password"
+            autoComplete="current-password"
+            aria-invalid={!!errors.password}
+            disabled={isSubmitting}
+            {...register("password")}
+          />
           {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
         </div>
 

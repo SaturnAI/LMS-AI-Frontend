@@ -1,21 +1,24 @@
 /** Colored badges for lead status & priority. Used in lead lists/tables. */
 import { Badge } from "@/components/ui/badge";
 import type { LeadPriority, LeadStatus } from "@/lib/api";
+import { PROGRESSION_STYLES, toneClass } from "@/lib/status-colors";
 import { cn } from "@/lib/utils";
 
+// Pipeline order: new -> contacted -> nurture -> qualified -> won/lost.
+// Middle stages get distinct progression shades; the terminal stages stay meaning-based.
 const STATUS_STYLES: Record<LeadStatus, string> = {
-  new: "bg-sky-100 text-sky-700",
-  contacted: "bg-indigo-100 text-indigo-700",
-  nurture: "bg-amber-100 text-amber-700",
-  qualified: "bg-violet-100 text-violet-700",
-  won: "bg-green-100 text-green-700",
-  lost: "bg-rose-100 text-rose-700",
+  new: toneClass("info"),
+  contacted: PROGRESSION_STYLES[0],
+  nurture: PROGRESSION_STYLES[1],
+  qualified: PROGRESSION_STYLES[2],
+  won: toneClass("success"),
+  lost: toneClass("danger"),
 };
 
 const PRIORITY_STYLES: Record<LeadPriority, string> = {
-  high: "bg-rose-100 text-rose-700",
-  medium: "bg-amber-100 text-amber-700",
-  low: "bg-slate-100 text-slate-600",
+  high: toneClass("danger"),
+  medium: toneClass("warning"),
+  low: toneClass("neutral"),
 };
 
 export function LeadStatusBadge({ status }: { status: LeadStatus }) {

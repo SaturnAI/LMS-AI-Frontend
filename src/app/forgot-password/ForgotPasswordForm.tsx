@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/common/PasswordInput";
 import { forgotPassword, verifyForgotPasswordOtp, updatePassword } from "@/lib/api";
 import {
   forgotEmailSchema,
@@ -27,7 +28,6 @@ export default function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
-  const [showPassword, setShowPassword] = useState(false);
 
   const emailForm = useForm<ForgotEmailValues>({
     resolver: zodResolver(forgotEmailSchema),
@@ -96,7 +96,7 @@ export default function ForgotPasswordForm() {
       {info && step !== "done" && (
         <div
           role="status"
-          className="mb-4 rounded-lg border border-brand-lime/60 bg-brand-lime/20 px-3.5 py-2.5 text-sm text-foreground"
+          className="mb-4 rounded-lg border border-sky-300/60 bg-sky-100/60 px-3.5 py-2.5 text-sm text-foreground"
         >
           {info}
         </div>
@@ -200,26 +200,14 @@ export default function ForgotPasswordForm() {
           >
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="newPassword">New password</Label>
-              <div className="relative">
-                <Input
-                  id="newPassword"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="At least 8 characters"
-                  autoComplete="new-password"
-                  autoFocus
-                  aria-invalid={!!passwordForm.formState.errors.newPassword}
-                  {...passwordForm.register("newPassword")}
-                />
-                <button
-                  type="button"
-                  tabIndex={-1}
-                  onClick={() => setShowPassword((s) => !s)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                  className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer text-xs font-medium text-primary"
-                >
-                  {showPassword ? "Hide" : "Show"}
-                </button>
-              </div>
+              <PasswordInput
+                id="newPassword"
+                placeholder="At least 8 characters"
+                autoComplete="new-password"
+                autoFocus
+                aria-invalid={!!passwordForm.formState.errors.newPassword}
+                {...passwordForm.register("newPassword")}
+              />
               {passwordForm.formState.errors.newPassword && (
                 <p className="text-sm text-destructive">
                   {passwordForm.formState.errors.newPassword.message}
@@ -228,9 +216,8 @@ export default function ForgotPasswordForm() {
             </div>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="confirm">Confirm password</Label>
-              <Input
+              <PasswordInput
                 id="confirm"
-                type={showPassword ? "text" : "password"}
                 placeholder="Re-enter your new password"
                 autoComplete="new-password"
                 aria-invalid={!!passwordForm.formState.errors.confirm}

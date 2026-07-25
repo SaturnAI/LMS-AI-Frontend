@@ -1,6 +1,7 @@
 "use client";
 
 /** Reusable yes/no confirmation (enable/disable/delete actions across resource pages). */
+import { TriangleAlert } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,7 +38,10 @@ export function ConfirmDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogTitle className={destructive ? "flex items-center gap-2" : undefined}>
+            {destructive && <TriangleAlert className="size-5 shrink-0 text-destructive" aria-hidden />}
+            {title}
+          </AlertDialogTitle>
           {description && <AlertDialogDescription>{description}</AlertDialogDescription>}
         </AlertDialogHeader>
         <AlertDialogFooter>

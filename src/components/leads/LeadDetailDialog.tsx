@@ -46,7 +46,7 @@ export function LeadDetailDialog({ lead, onOpenChange, onEdit, canEdit }: LeadDe
 
   return (
     <Dialog open={!!lead} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[85vh] max-w-lg overflow-y-auto sm:max-w-lg">
+      <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
         {lead && (
           <>
             <DialogHeader>

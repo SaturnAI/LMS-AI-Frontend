@@ -72,7 +72,7 @@ export function CompaniesBoard() {
       {isPending ? (
         <div className="grid gap-4 md:grid-cols-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-28 rounded-2xl" />
+            <Skeleton key={i} className="h-28 rounded-xl" />
           ))}
         </div>
       ) : isError ? (
@@ -82,6 +82,7 @@ export function CompaniesBoard() {
           icon={Building2}
           title={query ? "No matching companies" : "No companies yet"}
           description={query ? "Try a different search term." : "Add your first company to get started."}
+          isSearchResult={!!query}
         />
       ) : (
         <div className="grid gap-4 md:grid-cols-2">

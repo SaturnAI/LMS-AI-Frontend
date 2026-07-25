@@ -5,7 +5,7 @@
  * Guarded by `employee_master` view permission + tenant context. Mutations require `edit`.
  */
 import { useMemo, useState } from "react";
-import { MoreHorizontal, Plus, Users } from "lucide-react";
+import { Plus, Users } from "lucide-react";
 import { toast } from "sonner";
 import { RequireAccess } from "@/components/common/RequireAccess";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -13,15 +13,11 @@ import { PageToolbar } from "@/components/common/PageToolbar";
 import { DataTable, type Column } from "@/components/common/DataTable";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { RowActionsMenu } from "@/components/common/RowActionsMenu";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/use-auth";
 import { useDisabledEmployees, useEnabledEmployees, useSetEmployeeEnabled } from "@/hooks/use-employees";
 import { canEditPage, canViewPage, hasTenantContext } from "@/lib/rbac";
@@ -80,33 +76,26 @@ function EmployeesContent() {
       ? [
           {
             key: "actions",
-            header: "",
+            header: "Actions",
+            headerHidden: true,
             className: "text-right",
             cell: (e: Employee) => (
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  aria-label={`Actions for ${e.name}`}
-                  className="inline-flex size-8 items-center justify-center rounded-md hover:bg-muted"
+              <RowActionsMenu label={`Actions for ${e.name}`}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setEditing(e);
+                    setFormOpen(true);
+                  }}
                 >
-                  <MoreHorizontal className="size-4" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setEditing(e);
-                      setFormOpen(true);
-                    }}
-                  >
-                    Edit
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => setToggling(e)}
-                    className={tab === "disabled" ? undefined : "text-destructive"}
-                  >
-                    {tab === "disabled" ? "Enable" : "Disable"}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setToggling(e)}
+                  className={tab === "disabled" ? undefined : "text-destructive"}
+                >
+                  {tab === "disabled" ? "Enable" : "Disable"}
+                </DropdownMenuItem>
+              </RowActionsMenu>
             ),
           },
         ]
@@ -152,6 +141,7 @@ function EmployeesContent() {
             onRetry={() => active.refetch()}
             emptyIcon={Users}
             emptyTitle={query ? "No matching employees" : `No ${tab === "disabled" ? "disabled" : "active"} employees`}
+            emptyIsSearchResult={!!query}
             emptyDescription={query ? "Try a different search term." : undefined}
           />
         </TabsContent>

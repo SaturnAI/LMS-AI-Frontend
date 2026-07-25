@@ -3,8 +3,9 @@
 /** User avatar dropdown (account, sign out). Compact in the mobile header; expanded in the sidebar footer. */
 import { useRouter } from "next/navigation";
 import { LogOut, User } from "lucide-react";
-import { profilePictureUrl, type Profile } from "@/lib/api";
+import type { Profile } from "@/lib/api";
 import { useLogout } from "@/hooks/use-auth";
+import { useProfilePictureUrl } from "@/hooks/use-account";
 import { ROUTES } from "@/lib/constants";
 import { cn, initials, roleLabel } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -19,6 +20,7 @@ import {
 export function UserMenu({ profile, expanded = false }: { profile: Profile; expanded?: boolean }) {
   const router = useRouter();
   const logout = useLogout();
+  const profilePictureUrl = useProfilePictureUrl();
 
   async function handleLogout() {
     await logout.mutateAsync();

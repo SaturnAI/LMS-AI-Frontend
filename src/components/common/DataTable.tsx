@@ -9,6 +9,8 @@ import { ErrorState } from "./ErrorState";
 export interface Column<T> {
   key: string;
   header: string;
+  /** Render `header` for screen readers only (e.g. an "Actions" column with no visible label). */
+  headerHidden?: boolean;
   cell: (row: T) => ReactNode;
   className?: string;
 }
@@ -24,6 +26,8 @@ interface DataTableProps<T> {
   emptyIcon?: LucideIcon;
   emptyTitle?: string;
   emptyDescription?: string;
+  /** True when the empty state is "no results for your search," not "no data at all". */
+  emptyIsSearchResult?: boolean;
   rowClassName?: (row: T) => string | undefined;
   onRowClick?: (row: T) => void;
 }
@@ -39,15 +43,18 @@ export function DataTable<T>({
   emptyIcon,
   emptyTitle = "Nothing here yet",
   emptyDescription,
+  emptyIsSearchResult,
   rowClassName,
   onRowClick,
 }: DataTableProps<T>) {
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-2 rounded-2xl border p-4">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="h-10 w-full" />
-        ))}
+      <div className="overflow-hidden rounded-2xl border">
+        <div className="flex flex-col gap-px bg-border">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Skeleton key={i} className="h-11 w-full rounded-none" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -57,7 +64,14 @@ export function DataTable<T>({
   }
 
   if (rows.length === 0) {
-    return <EmptyState icon={emptyIcon} title={emptyTitle} description={emptyDescription} />;
+    return (
+      <EmptyState
+        icon={emptyIcon}
+        title={emptyTitle}
+        description={emptyDescription}
+        isSearchResult={emptyIsSearchResult}
+      />
+    );
   }
 
   return (
@@ -67,7 +81,7 @@ export function DataTable<T>({
           <TableRow className="bg-muted/50 hover:bg-muted/50">
             {columns.map((col) => (
               <TableHead key={col.key} className={col.className}>
-                {col.header}
+                {col.headerHidden ? <span className="sr-only">{col.header}</span> : col.header}
               </TableHead>
             ))}
           </TableRow>

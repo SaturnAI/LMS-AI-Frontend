@@ -21,9 +21,9 @@ export function PermissionsEditor({ value, onChange }: PermissionsEditorProps) {
   return (
     <div className="flex flex-col gap-3">
       <Label>Permissions</Label>
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 divide-y sm:grid-cols-3 sm:divide-y-0">
         {PERMISSION_PAGES.map((page) => (
-          <div key={page} className="flex flex-col gap-1.5">
+          <div key={page} className="flex flex-col gap-1.5 pt-3 first:pt-0 sm:pt-0">
             <span className="text-xs text-muted-foreground">{PAGE_LABELS[page]}</span>
             <Select
               value={value[page] ?? "not_allowed"}

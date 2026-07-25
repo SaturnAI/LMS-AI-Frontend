@@ -15,15 +15,16 @@ import { Pagination } from "@/components/common/Pagination";
 import { useLogs } from "@/hooks/use-logs";
 import { canViewPage, hasTenantContext } from "@/lib/rbac";
 import type { ActionType, ActivityLog } from "@/lib/api";
+import { PROGRESSION_STYLES, toneClass } from "@/lib/status-colors";
 import { cn } from "@/lib/utils";
 
 const ACTION_STYLES: Record<ActionType, string> = {
-  add: "bg-green-100 text-green-700",
-  edit: "bg-sky-100 text-sky-700",
-  delete: "bg-rose-100 text-rose-700",
-  disable: "bg-rose-100 text-rose-700",
-  enable: "bg-green-100 text-green-700",
-  uploaded: "bg-violet-100 text-violet-700",
+  add: toneClass("success"),
+  edit: toneClass("info"),
+  delete: toneClass("danger"),
+  disable: toneClass("danger"),
+  enable: toneClass("success"),
+  uploaded: PROGRESSION_STYLES[2],
 };
 
 export default function LogsPage() {
@@ -93,6 +94,7 @@ function LogsContent() {
         onRetry={() => refetch()}
         emptyIcon={ScrollText}
         emptyTitle={search ? "No matching activity" : "No activity yet"}
+        emptyIsSearchResult={!!search}
         emptyDescription={search ? "Try a different search term." : "Actions across the workspace will show here."}
       />
 

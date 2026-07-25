@@ -1,5 +1,6 @@
 /** Colored tag badge for notes. Color is deterministic from the tag text, so any user-created tag stays consistent. */
 import { Badge } from "@/components/ui/badge";
+import { hashIndex } from "@/lib/avatar-color";
 import { cn } from "@/lib/utils";
 
 const TAG_COLORS = [
@@ -11,9 +12,7 @@ const TAG_COLORS = [
 ];
 
 function colorFor(tag: string): string {
-  let hash = 0;
-  for (let i = 0; i < tag.length; i++) hash = (hash + tag.charCodeAt(i)) % TAG_COLORS.length;
-  return TAG_COLORS[hash];
+  return TAG_COLORS[hashIndex(tag, TAG_COLORS.length)];
 }
 
 export function TagBadge({ tag, className }: { tag: string; className?: string }) {

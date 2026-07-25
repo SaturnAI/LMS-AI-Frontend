@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { FormField } from "@/components/common/FormField";
 import { useAddSuperAdmin, useUpdateSuperAdmin } from "@/hooks/use-super-admins";
 import { superAdminSchema, type SuperAdminValues } from "@/lib/validations/super-admin";
 import type { SuperAdmin } from "@/lib/api";
@@ -64,7 +64,7 @@ export function SuperAdminFormDialog({ open, onOpenChange, editing }: SuperAdmin
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{isEdit ? "Edit super admin" : "Add super admin"}</DialogTitle>
           <DialogDescription>
@@ -75,23 +75,17 @@ export function SuperAdminFormDialog({ open, onOpenChange, editing }: SuperAdmin
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="sa-email">Email</Label>
+          <FormField label="Email" htmlFor="sa-email" error={errors.email?.message}>
             <Input id="sa-email" type="email" disabled={isEdit || isSubmitting} {...register("email")} />
-            {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
-          </div>
+          </FormField>
 
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="sa-name">Name</Label>
+          <FormField label="Name" htmlFor="sa-name" error={errors.name?.message}>
             <Input id="sa-name" disabled={isSubmitting} {...register("name")} />
-            {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
-          </div>
+          </FormField>
 
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="sa-phone">Phone number</Label>
+          <FormField label="Phone number" htmlFor="sa-phone" error={errors.phone_number?.message}>
             <Input id="sa-phone" type="tel" disabled={isSubmitting} {...register("phone_number")} />
-            {errors.phone_number && <p className="text-sm text-destructive">{errors.phone_number.message}</p>}
-          </div>
+          </FormField>
 
           <DialogFooter>
             <Button type="submit" disabled={isSubmitting}>

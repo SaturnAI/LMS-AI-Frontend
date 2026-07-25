@@ -13,7 +13,9 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { PageToolbar } from "@/components/common/PageToolbar";
 import { DataTable, type Column } from "@/components/common/DataTable";
 import { Pagination } from "@/components/common/Pagination";
+import { RowActionsMenu } from "@/components/common/RowActionsMenu";
 import { Button } from "@/components/ui/button";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { LeadPriorityBadge, LeadStatusBadge } from "@/components/dashboard/LeadStatusBadge";
 import { useAuth } from "@/hooks/use-auth";
 import { useLeads } from "@/hooks/use-leads";
@@ -80,8 +82,34 @@ function LeadsContent() {
       },
       { key: "comments", header: "Comments", cell: (l) => l.comments?.length ?? 0 },
       { key: "created_at", header: "Created", cell: (l) => l.created_at ?? "—" },
+      ...(canEdit
+        ? [
+            {
+              key: "actions",
+              header: "Actions",
+              headerHidden: true,
+              className: "text-right",
+              cell: (l: LeadListItem) => (
+                // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- stop the row's onRowClick from also firing
+                <div onClick={(e) => e.stopPropagation()}>
+                  <RowActionsMenu label={`Actions for ${l.name}`}>
+                    <DropdownMenuItem onClick={() => setViewing(l)}>View details</DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setEditing(l);
+                        setFormOpen(true);
+                      }}
+                    >
+                      Edit
+                    </DropdownMenuItem>
+                  </RowActionsMenu>
+                </div>
+              ),
+            },
+          ]
+        : []),
     ],
-    [],
+    [canEdit],
   );
 
   return (
@@ -122,6 +150,7 @@ function LeadsContent() {
         onRowClick={(l) => setViewing(l)}
         emptyIcon={Contact}
         emptyTitle={search ? "No matching leads" : "No leads yet"}
+        emptyIsSearchResult={!!search}
         emptyDescription={search ? "Try a different search term." : "Add your first lead to get started."}
       />
 

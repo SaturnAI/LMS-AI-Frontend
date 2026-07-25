@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { FormField } from "@/components/common/FormField";
 import { PermissionsEditor } from "@/components/common/PermissionsEditor";
 import { useAddEmployee, useUpdateEmployee } from "@/hooks/use-employees";
 import { employeeSchema, type EmployeeValues } from "@/lib/validations/employee";
@@ -83,23 +83,17 @@ export function EmployeeFormDialog({ open, onOpenChange, editing }: EmployeeForm
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="emp-name">Name</Label>
+          <FormField label="Name" htmlFor="emp-name" error={errors.name?.message}>
             <Input id="emp-name" disabled={isSubmitting} {...register("name")} />
-            {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
-          </div>
+          </FormField>
 
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="emp-email">Email</Label>
+          <FormField label="Email" htmlFor="emp-email" error={errors.email?.message}>
             <Input id="emp-email" type="email" disabled={isEdit || isSubmitting} {...register("email")} />
-            {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
-          </div>
+          </FormField>
 
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="emp-phone">Phone number</Label>
+          <FormField label="Phone number" htmlFor="emp-phone" error={errors.phone_number?.message}>
             <Input id="emp-phone" disabled={isSubmitting} {...register("phone_number")} />
-            {errors.phone_number && <p className="text-sm text-destructive">{errors.phone_number.message}</p>}
-          </div>
+          </FormField>
 
           <PermissionsEditor value={permissions} onChange={setPermissions} />
 

@@ -36,7 +36,7 @@ export function EmployeeOverview({ profile }: { profile: Profile }) {
 
       {hasAnyModule ? (
         <>
-          <KpiGrid>
+          <KpiGrid columns={2}>
             {canLeads && <LeadsKpi label="My leads" />}
             {canTeam && <EmployeesKpi label="Team" />}
           </KpiGrid>

@@ -1,6 +1,6 @@
 "use client";
 
-/** Persistent desktop sidebar (hidden below lg): brand, nav, and the user menu footer. Collapsible to an icon rail. */
+/** Persistent desktop sidebar (hidden below lg): brand + nav. Collapsible to an icon rail. Profile lives in the header. */
 import { useEffect, useState } from "react";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import type { Profile } from "@/lib/api";
@@ -8,7 +8,6 @@ import { buildNavigation } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { Brand } from "./Brand";
 import { SidebarNav } from "./SidebarNav";
-import { UserMenu } from "./UserMenu";
 
 const STORAGE_KEY = "lms-ai:sidebar-collapsed";
 
@@ -62,9 +61,6 @@ export function AppSidebar({ profile }: { profile: Profile }) {
 
       <div className="flex-1 overflow-y-auto">
         <SidebarNav items={items} collapsed={collapsed} />
-      </div>
-      <div className={cn("shrink-0 p-3", collapsed && "flex justify-center px-2")}>
-        <UserMenu profile={profile} expanded={!collapsed} />
       </div>
     </aside>
   );

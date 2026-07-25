@@ -14,7 +14,7 @@ import {
   useUpdateProfilePicture,
 } from "@/hooks/use-account";
 import { roleLabel } from "@/lib/utils";
-import { profilePictureUrl } from "@/lib/api";
+import { useProfilePictureUrl } from "@/hooks/use-account";
 import { changePasswordSchema, updateProfileSchema, type ChangePasswordValues, type UpdateProfileValues } from "@/lib/validations/account";
 import FullPageLoader from "@/components/FullPageLoader";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -40,6 +40,7 @@ function ProfilePictureSection() {
   const [broken, setBroken] = useState(false);
   const upload = useUpdateProfilePicture();
   const remove = useDeleteProfilePicture();
+  const profilePictureUrl = useProfilePictureUrl();
 
   async function handleUpload(file: File | undefined) {
     if (!file) return;

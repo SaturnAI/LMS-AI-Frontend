@@ -1,10 +1,11 @@
 "use client";
 
 /** Add/Edit dialog for a lead: core fields, sales-rep assignment, and optional address/contact details. */
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+import { ChevronDown } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -16,7 +17,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { FormField } from "@/components/common/FormField";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAddLead, useSalesRepDropdown, useUpdateLead } from "@/hooks/use-leads";
 import { leadSchema, type LeadValues } from "@/lib/validations/lead";
@@ -56,6 +59,7 @@ export function LeadFormDialog({ open, onOpenChange, editing }: LeadFormDialogPr
   const repsQuery = useSalesRepDropdown();
   const [selectedReps, setSelectedReps] = useState<string[]>([]);
   const [repsError, setRepsError] = useState<string | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   const {
     register,
@@ -117,7 +121,7 @@ export function LeadFormDialog({ open, onOpenChange, editing }: LeadFormDialogPr
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[85vh] max-w-lg overflow-y-auto sm:max-w-lg">
+      <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{isEdit ? "Edit lead" : "Add lead"}</DialogTitle>
           <DialogDescription>
@@ -127,23 +131,23 @@ export function LeadFormDialog({ open, onOpenChange, editing }: LeadFormDialogPr
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Lead name" error={errors.name?.message} className="sm:col-span-2">
+            <FormField label="Lead name" error={errors.name?.message} className="sm:col-span-2">
               <Input disabled={isSubmitting} {...register("name")} />
-            </Field>
-            <Field label="Company name" error={errors.company_name?.message}>
+            </FormField>
+            <FormField label="Company name" error={errors.company_name?.message}>
               <Input disabled={isSubmitting} {...register("company_name")} />
-            </Field>
-            <Field label="Designation (optional)">
+            </FormField>
+            <FormField label="Designation (optional)">
               <Input disabled={isSubmitting} {...register("designation")} />
-            </Field>
-            <Field label="Email (optional)">
+            </FormField>
+            <FormField label="Email (optional)">
               <Input type="email" disabled={isSubmitting} {...register("email")} />
-            </Field>
-            <Field label="Phone number (optional)">
+            </FormField>
+            <FormField label="Phone number (optional)">
               <Input disabled={isSubmitting} {...register("phone_number")} />
-            </Field>
+            </FormField>
 
-            <Field label="Status">
+            <FormField label="Status">
               <Select value={status} onValueChange={(v) => setValue("status", v as LeadStatus)} disabled={isSubmitting}>
                 <SelectTrigger className="w-full">
                   <SelectValue />
@@ -156,8 +160,8 @@ export function LeadFormDialog({ open, onOpenChange, editing }: LeadFormDialogPr
                   ))}
                 </SelectContent>
               </Select>
-            </Field>
-            <Field label="Priority">
+            </FormField>
+            <FormField label="Priority">
               <Select
                 value={priority}
                 onValueChange={(v) => setValue("priority", v as LeadPriority)}
@@ -174,8 +178,8 @@ export function LeadFormDialog({ open, onOpenChange, editing }: LeadFormDialogPr
                   ))}
                 </SelectContent>
               </Select>
-            </Field>
-            <Field label="Source" className="sm:col-span-2">
+            </FormField>
+            <FormField label="Source" className="sm:col-span-2">
               <Select value={source} onValueChange={(v) => setValue("source", v as LeadSource)} disabled={isSubmitting}>
                 <SelectTrigger className="w-full">
                   <SelectValue />
@@ -188,51 +192,59 @@ export function LeadFormDialog({ open, onOpenChange, editing }: LeadFormDialogPr
                   ))}
                 </SelectContent>
               </Select>
-            </Field>
+            </FormField>
 
-            <Field label="Remarks (optional)" error={errors.remarks?.message} className="sm:col-span-2">
+            <FormField label="Remarks (optional)" error={errors.remarks?.message} className="sm:col-span-2">
               <Textarea rows={2} disabled={isSubmitting} {...register("remarks")} />
-            </Field>
+            </FormField>
           </div>
 
-          <details className="rounded-lg border p-3">
-            <summary className="cursor-pointer text-sm font-medium text-foreground">
+          <div className="rounded-lg border">
+            <button
+              type="button"
+              onClick={() => setDetailsOpen((v) => !v)}
+              aria-expanded={detailsOpen}
+              className="flex w-full cursor-pointer items-center justify-between px-3 py-2.5 text-sm font-medium text-foreground"
+            >
               Additional details (addresses, point of contact)
-            </summary>
-            <div className="mt-3 flex flex-col gap-4">
-              <div className="flex flex-col gap-2">
-                <Label className="text-xs text-muted-foreground">Registered address</Label>
-                <div className="grid gap-2 sm:grid-cols-2">
-                  <Input placeholder="Address line 1" disabled={isSubmitting} {...register("company_registered_address.address_1")} />
-                  <Input placeholder="Address line 2" disabled={isSubmitting} {...register("company_registered_address.address_2")} />
-                  <Input placeholder="City" disabled={isSubmitting} {...register("company_registered_address.city")} />
-                  <Input placeholder="State" disabled={isSubmitting} {...register("company_registered_address.state")} />
-                  <Input placeholder="Country" disabled={isSubmitting} {...register("company_registered_address.country")} />
-                  <Input placeholder="Pincode" disabled={isSubmitting} {...register("company_registered_address.pincode")} />
+              <ChevronDown className={cn("size-4 text-muted-foreground transition-transform", detailsOpen && "rotate-180")} />
+            </button>
+            {detailsOpen && (
+              <div className="flex flex-col gap-4 border-t p-3">
+                <div className="flex flex-col gap-2">
+                  <Label className="text-xs text-muted-foreground">Registered address</Label>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    <Input placeholder="Address line 1" disabled={isSubmitting} {...register("company_registered_address.address_1")} />
+                    <Input placeholder="Address line 2" disabled={isSubmitting} {...register("company_registered_address.address_2")} />
+                    <Input placeholder="City" disabled={isSubmitting} {...register("company_registered_address.city")} />
+                    <Input placeholder="State" disabled={isSubmitting} {...register("company_registered_address.state")} />
+                    <Input placeholder="Country" disabled={isSubmitting} {...register("company_registered_address.country")} />
+                    <Input placeholder="Pincode" disabled={isSubmitting} {...register("company_registered_address.pincode")} />
+                  </div>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label className="text-xs text-muted-foreground">Operational address</Label>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    <Input placeholder="Address line 1" disabled={isSubmitting} {...register("company_operational_address.address_1")} />
+                    <Input placeholder="Address line 2" disabled={isSubmitting} {...register("company_operational_address.address_2")} />
+                    <Input placeholder="City" disabled={isSubmitting} {...register("company_operational_address.city")} />
+                    <Input placeholder="State" disabled={isSubmitting} {...register("company_operational_address.state")} />
+                    <Input placeholder="Country" disabled={isSubmitting} {...register("company_operational_address.country")} />
+                    <Input placeholder="Pincode" disabled={isSubmitting} {...register("company_operational_address.pincode")} />
+                  </div>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label className="text-xs text-muted-foreground">Point of contact</Label>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    <Input placeholder="Name" disabled={isSubmitting} {...register("person_of_contact.name")} />
+                    <Input placeholder="Designation" disabled={isSubmitting} {...register("person_of_contact.designation")} />
+                    <Input placeholder="Email" disabled={isSubmitting} {...register("person_of_contact.email")} />
+                    <Input placeholder="Phone number" disabled={isSubmitting} {...register("person_of_contact.phone_number")} />
+                  </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-2">
-                <Label className="text-xs text-muted-foreground">Operational address</Label>
-                <div className="grid gap-2 sm:grid-cols-2">
-                  <Input placeholder="Address line 1" disabled={isSubmitting} {...register("company_operational_address.address_1")} />
-                  <Input placeholder="Address line 2" disabled={isSubmitting} {...register("company_operational_address.address_2")} />
-                  <Input placeholder="City" disabled={isSubmitting} {...register("company_operational_address.city")} />
-                  <Input placeholder="State" disabled={isSubmitting} {...register("company_operational_address.state")} />
-                  <Input placeholder="Country" disabled={isSubmitting} {...register("company_operational_address.country")} />
-                  <Input placeholder="Pincode" disabled={isSubmitting} {...register("company_operational_address.pincode")} />
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label className="text-xs text-muted-foreground">Point of contact</Label>
-                <div className="grid gap-2 sm:grid-cols-2">
-                  <Input placeholder="Name" disabled={isSubmitting} {...register("person_of_contact.name")} />
-                  <Input placeholder="Designation" disabled={isSubmitting} {...register("person_of_contact.designation")} />
-                  <Input placeholder="Email" disabled={isSubmitting} {...register("person_of_contact.email")} />
-                  <Input placeholder="Phone number" disabled={isSubmitting} {...register("person_of_contact.phone_number")} />
-                </div>
-              </div>
-            </div>
-          </details>
+            )}
+          </div>
 
           <div className="flex flex-col gap-1.5">
             <Label>Sales representatives</Label>
@@ -270,25 +282,5 @@ export function LeadFormDialog({ open, onOpenChange, editing }: LeadFormDialogPr
         </form>
       </DialogContent>
     </Dialog>
-  );
-}
-
-function Field({
-  label,
-  error,
-  className,
-  children,
-}: {
-  label: string;
-  error?: string;
-  className?: string;
-  children: ReactNode;
-}) {
-  return (
-    <div className={`flex flex-col gap-1.5 ${className ?? ""}`}>
-      <Label>{label}</Label>
-      {children}
-      {error && <p className="text-sm text-destructive">{error}</p>}
-    </div>
   );
 }

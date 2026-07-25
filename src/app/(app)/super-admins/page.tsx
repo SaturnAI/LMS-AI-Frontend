@@ -2,7 +2,7 @@
 
 /** Route: `/super-admins` — platform administrators management (super_admin only). */
 import { useMemo, useState } from "react";
-import { Plus, ShieldCheck, MoreHorizontal } from "lucide-react";
+import { Plus, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { RequireAccess } from "@/components/common/RequireAccess";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -10,13 +10,10 @@ import { PageToolbar } from "@/components/common/PageToolbar";
 import { DataTable, type Column } from "@/components/common/DataTable";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { RowActionsMenu } from "@/components/common/RowActionsMenu";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/use-auth";
 import { useSetSuperAdminEnabled, useSuperAdmins } from "@/hooks/use-super-admins";
 import { isSuperAdmin } from "@/lib/rbac";
@@ -38,6 +35,7 @@ function SuperAdminsContent() {
   const { data, isPending, isError, error, refetch } = useSuperAdmins();
   const setEnabled = useSetSuperAdminEnabled();
 
+  const [tab, setTab] = useState<"enabled" | "disabled">("enabled");
   const [query, setQuery] = useState("");
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<SuperAdmin | null>(null);
@@ -45,10 +43,11 @@ function SuperAdminsContent() {
 
   const rows = useMemo(() => {
     if (!data) return [];
+    const byTab = data.filter((a) => a.is_disabled === (tab === "disabled"));
     const q = query.trim().toLowerCase();
-    if (!q) return data;
-    return data.filter((a) => a.name.toLowerCase().includes(q) || a.email.toLowerCase().includes(q));
-  }, [data, query]);
+    if (!q) return byTab;
+    return byTab.filter((a) => a.name.toLowerCase().includes(q) || a.email.toLowerCase().includes(q));
+  }, [data, query, tab]);
 
   async function confirmToggle() {
     if (!toggling) return;
@@ -68,34 +67,27 @@ function SuperAdminsContent() {
     { key: "status", header: "Status", cell: (a) => <StatusBadge disabled={a.is_disabled} /> },
     {
       key: "actions",
-      header: "",
+      header: "Actions",
+      headerHidden: true,
       className: "text-right",
       cell: (a) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            aria-label={`Actions for ${a.name}`}
-            className="inline-flex size-8 items-center justify-center rounded-md hover:bg-muted"
+        <RowActionsMenu label={`Actions for ${a.name}`}>
+          <DropdownMenuItem
+            onClick={() => {
+              setEditing(a);
+              setFormOpen(true);
+            }}
           >
-            <MoreHorizontal className="size-4" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              onClick={() => {
-                setEditing(a);
-                setFormOpen(true);
-              }}
-            >
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              disabled={a.email === currentEmail}
-              onClick={() => setToggling(a)}
-              className={a.is_disabled ? undefined : "text-destructive"}
-            >
-              {a.is_disabled ? "Enable" : "Disable"}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            Edit
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            disabled={a.email === currentEmail}
+            onClick={() => setToggling(a)}
+            className={a.is_disabled ? undefined : "text-destructive"}
+          >
+            {a.is_disabled ? "Enable" : "Disable"}
+          </DropdownMenuItem>
+        </RowActionsMenu>
       ),
     },
   ];
@@ -119,20 +111,29 @@ function SuperAdminsContent() {
         }
       />
 
-      <PageToolbar searchValue={query} onSearchChange={setQuery} searchPlaceholder="Search by name or email…" />
+      <Tabs value={tab} onValueChange={(v) => setTab(v as "enabled" | "disabled")}>
+        <TabsList>
+          <TabsTrigger value="enabled">Active</TabsTrigger>
+          <TabsTrigger value="disabled">Disabled</TabsTrigger>
+        </TabsList>
 
-      <DataTable
-        columns={columns}
-        rows={rows}
-        rowKey={(a) => a.code}
-        isLoading={isPending}
-        isError={isError}
-        errorMessage={(error as Error)?.message}
-        onRetry={() => refetch()}
-        emptyIcon={ShieldCheck}
-        emptyTitle={query ? "No matching admins" : "No super admins yet"}
-        emptyDescription={query ? "Try a different search term." : "Add your first platform administrator."}
-      />
+        <TabsContent value={tab} className="mt-4 flex flex-col gap-4">
+          <PageToolbar searchValue={query} onSearchChange={setQuery} searchPlaceholder="Search by name or email…" />
+          <DataTable
+            columns={columns}
+            rows={rows}
+            rowKey={(a) => a.code}
+            isLoading={isPending}
+            isError={isError}
+            errorMessage={(error as Error)?.message}
+            onRetry={() => refetch()}
+            emptyIcon={ShieldCheck}
+            emptyTitle={query ? "No matching admins" : `No ${tab === "disabled" ? "disabled" : "active"} admins`}
+            emptyIsSearchResult={!!query}
+            emptyDescription={query ? "Try a different search term." : "Add your first platform administrator."}
+          />
+        </TabsContent>
+      </Tabs>
 
       <SuperAdminFormDialog open={formOpen} onOpenChange={setFormOpen} editing={editing} />
 

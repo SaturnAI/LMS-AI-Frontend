@@ -27,7 +27,7 @@ export function CompanyAdminOverview({ profile }: { profile: Profile }) {
           />
         }
       />
-      <KpiGrid>
+      <KpiGrid columns={2}>
         <LeadsKpi />
         <EmployeesKpi />
       </KpiGrid>
