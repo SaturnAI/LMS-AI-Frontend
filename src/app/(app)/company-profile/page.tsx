@@ -15,6 +15,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useUpdateCompanyProfile } from "@/hooks/use-companies";
 import { isCompanyAdmin } from "@/lib/rbac";
 import { companyProfileSchema, type CompanyProfileValues } from "@/lib/validations/company";
+import { normalizeGstPan } from "@/components/companies/company-field-meta";
 import { companyLogoUrl, type CompanyProfileInput, type Profile } from "@/lib/api";
 
 export default function CompanyProfilePage() {
@@ -82,7 +83,7 @@ function CompanyProfileContent() {
   }, [auth.status, companyData, reset]);
 
   async function onSubmit(values: CompanyProfileValues) {
-    const input: CompanyProfileInput = { ...values, company_logo: logo ?? undefined };
+    const input: CompanyProfileInput = { ...normalizeGstPan(values), company_logo: logo ?? undefined };
     try {
       const result = await updateMutation.mutateAsync(input);
       toast.success(result.message || "Company profile updated.");
@@ -147,7 +148,7 @@ function CompanyProfileContent() {
           <Field label="Phone number" error={errors.phone_number?.message}>
             <Input disabled={isSubmitting} {...register("phone_number")} />
           </Field>
-          <Field label="Mobile number (optional)">
+          <Field label="Mobile number (optional)" error={errors.mobile_number?.message}>
             <Input disabled={isSubmitting} {...register("mobile_number")} />
           </Field>
           <Field label="Address" error={errors.address_1?.message} className="sm:col-span-2">
@@ -174,16 +175,16 @@ function CompanyProfileContent() {
           <Field label="Company size (optional)">
             <Input disabled={isSubmitting} {...register("company_size")} />
           </Field>
-          <Field label="Website (optional)">
+          <Field label="Website (optional)" error={errors.website?.message}>
             <Input disabled={isSubmitting} {...register("website")} />
           </Field>
           <Field label="Designation (optional)">
             <Input disabled={isSubmitting} {...register("designation")} />
           </Field>
-          <Field label="GST number (optional)">
+          <Field label="GST number (optional)" error={errors.gst_number?.message}>
             <Input disabled={isSubmitting} {...register("gst_number")} />
           </Field>
-          <Field label="PAN number (optional)">
+          <Field label="PAN number (optional)" error={errors.pan_number?.message}>
             <Input disabled={isSubmitting} {...register("pan_number")} />
           </Field>
         </div>

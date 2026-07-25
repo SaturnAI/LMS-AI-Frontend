@@ -5,19 +5,14 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { ShieldCheck } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/components/common/FormField";
 import { useAddSuperAdmin, useUpdateSuperAdmin } from "@/hooks/use-super-admins";
 import { superAdminSchema, type SuperAdminValues } from "@/lib/validations/super-admin";
+import { SUPER_ADMIN_FIELD_META } from "./super-admin-field-meta";
 import type { SuperAdmin } from "@/lib/api";
 
 interface SuperAdminFormDialogProps {
@@ -25,6 +20,8 @@ interface SuperAdminFormDialogProps {
   onOpenChange: (open: boolean) => void;
   editing?: SuperAdmin | null;
 }
+
+const INPUT_HEIGHT = "h-10";
 
 export function SuperAdminFormDialog({ open, onOpenChange, editing }: SuperAdminFormDialogProps) {
   const isEdit = Boolean(editing);
@@ -36,6 +33,7 @@ export function SuperAdminFormDialog({ open, onOpenChange, editing }: SuperAdmin
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<SuperAdminValues>({
     resolver: zodResolver(superAdminSchema),
@@ -62,29 +60,81 @@ export function SuperAdminFormDialog({ open, onOpenChange, editing }: SuperAdmin
     }
   }
 
+  const values = watch();
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>{isEdit ? "Edit super admin" : "Add super admin"}</DialogTitle>
-          <DialogDescription>
-            {isEdit
-              ? "Update this administrator's name and phone number."
-              : "A password will be generated and emailed automatically."}
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-lg">
+        <div className="flex items-center gap-3 pb-2">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+            <ShieldCheck className="size-5 text-primary" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <DialogTitle className="text-lg font-semibold">
+              {isEdit ? "Edit super admin" : "Add a new super admin"}
+            </DialogTitle>
+            <DialogDescription className="mt-1">
+              {isEdit
+                ? "Update this administrator's name and phone number."
+                : "A password will be generated and emailed automatically."}
+            </DialogDescription>
+          </div>
+        </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
-          <FormField label="Email" htmlFor="sa-email" error={errors.email?.message}>
-            <Input id="sa-email" type="email" disabled={isEdit || isSubmitting} {...register("email")} />
+        <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-5">
+          <FormField
+            label="Email"
+            htmlFor="sa-email"
+            required={SUPER_ADMIN_FIELD_META.email.required}
+            error={errors.email?.message}
+          >
+            <Input
+              id="sa-email"
+              className={INPUT_HEIGHT}
+              type="email"
+              placeholder={SUPER_ADMIN_FIELD_META.email.placeholder}
+              disabled={isEdit || isSubmitting}
+              {...register("email")}
+            />
           </FormField>
 
-          <FormField label="Name" htmlFor="sa-name" error={errors.name?.message}>
-            <Input id="sa-name" disabled={isSubmitting} {...register("name")} />
+          <FormField
+            label="Name"
+            htmlFor="sa-name"
+            required={SUPER_ADMIN_FIELD_META.name.required}
+            error={errors.name?.message}
+            maxLength={SUPER_ADMIN_FIELD_META.name.maxLength}
+            currentLength={values.name?.length}
+          >
+            <Input
+              id="sa-name"
+              className={INPUT_HEIGHT}
+              placeholder={SUPER_ADMIN_FIELD_META.name.placeholder}
+              maxLength={SUPER_ADMIN_FIELD_META.name.maxLength}
+              disabled={isSubmitting}
+              {...register("name")}
+            />
           </FormField>
 
-          <FormField label="Phone number" htmlFor="sa-phone" error={errors.phone_number?.message}>
-            <Input id="sa-phone" type="tel" disabled={isSubmitting} {...register("phone_number")} />
+          <FormField
+            label="Phone number"
+            htmlFor="sa-phone"
+            required={SUPER_ADMIN_FIELD_META.phone_number.required}
+            error={errors.phone_number?.message}
+            hint={SUPER_ADMIN_FIELD_META.phone_number.hint}
+            maxLength={SUPER_ADMIN_FIELD_META.phone_number.maxLength}
+            currentLength={values.phone_number?.length}
+          >
+            <Input
+              id="sa-phone"
+              className={INPUT_HEIGHT}
+              type="tel"
+              inputMode="numeric"
+              placeholder={SUPER_ADMIN_FIELD_META.phone_number.placeholder}
+              maxLength={SUPER_ADMIN_FIELD_META.phone_number.maxLength}
+              disabled={isSubmitting}
+              {...register("phone_number")}
+            />
           </FormField>
 
           <DialogFooter>

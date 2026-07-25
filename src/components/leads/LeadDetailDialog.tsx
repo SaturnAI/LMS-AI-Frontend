@@ -4,19 +4,16 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Contact } from "lucide-react";
+import { Dialog, DialogContent, DialogFooter, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { LeadPriorityBadge, LeadStatusBadge } from "@/components/dashboard/LeadStatusBadge";
 import { useAddComment } from "@/hooks/use-leads";
 import { commentSchema, type CommentValues } from "@/lib/validations/lead";
 import type { LeadListItem } from "@/lib/api";
+
+const COMMENT_MAX_LENGTH = 200;
 
 interface LeadDetailDialogProps {
   lead: LeadListItem | null;
@@ -31,8 +28,10 @@ export function LeadDetailDialog({ lead, onOpenChange, onEdit, canEdit }: LeadDe
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<CommentValues>({ resolver: zodResolver(commentSchema), defaultValues: { comment: "" } });
+  const comment = watch("comment");
 
   async function onSubmit(values: CommentValues) {
     if (!lead) return;
@@ -46,12 +45,15 @@ export function LeadDetailDialog({ lead, onOpenChange, onEdit, canEdit }: LeadDe
 
   return (
     <Dialog open={!!lead} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
+      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
         {lead && (
           <>
-            <DialogHeader>
-              <DialogTitle>{lead.name}</DialogTitle>
-            </DialogHeader>
+            <div className="flex items-center gap-3">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                <Contact className="size-5 text-primary" />
+              </div>
+              <DialogTitle className="text-lg font-semibold">{lead.name}</DialogTitle>
+            </div>
 
             <div className="flex flex-col gap-4">
               <div className="flex flex-wrap items-center gap-2">
@@ -106,9 +108,16 @@ export function LeadDetailDialog({ lead, onOpenChange, onEdit, canEdit }: LeadDe
 
                 {canEdit && (
                   <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-1.5">
+                    <div className="flex items-baseline justify-between gap-2">
+                      <span className="text-xs text-muted-foreground">Add a comment</span>
+                      <span className="text-xs whitespace-nowrap text-muted-foreground tabular-nums">
+                        {comment?.length ?? 0}/{COMMENT_MAX_LENGTH}
+                      </span>
+                    </div>
                     <Textarea
                       rows={2}
-                      placeholder="Add a comment…"
+                      placeholder="Share an update, next step, or note for the team…"
+                      maxLength={COMMENT_MAX_LENGTH}
                       disabled={isSubmitting}
                       {...register("comment")}
                     />
