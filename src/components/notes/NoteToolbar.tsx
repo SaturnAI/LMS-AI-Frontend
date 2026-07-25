@@ -1,7 +1,7 @@
 "use client";
 
 /** Rich-text toolbar wired to the note's live Tiptap editor instance. */
-import { Bold, Indent, Italic, ListChecks, Outdent, Underline, type LucideIcon } from "lucide-react";
+import { Bold, Indent, Italic, ListChecks, Outdent, Paperclip, Underline, type LucideIcon } from "lucide-react";
 import type { Editor } from "@tiptap/react";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -36,6 +36,7 @@ export interface NoteToolbarState {
 interface NoteToolbarProps {
   editor: Editor | null;
   state: NoteToolbarState | null;
+  onAttachFile: () => void;
 }
 
 function ToolbarButton({
@@ -73,7 +74,7 @@ function ToolbarButton({
   );
 }
 
-export function NoteToolbar({ editor, state }: NoteToolbarProps) {
+export function NoteToolbar({ editor, state, onAttachFile }: NoteToolbarProps) {
   if (!editor || !state) return null;
 
   return (
@@ -160,11 +161,16 @@ export function NoteToolbar({ editor, state }: NoteToolbarProps) {
       </Select>
 
       <ToolbarButton
+        icon={Paperclip}
+        label="Attach file"
+        onClick={onAttachFile}
+        className="ml-auto"
+      />
+      <ToolbarButton
         icon={ListChecks}
         label="Checklist"
         active={state.taskList}
         onClick={() => editor.chain().focus().toggleTaskList().run()}
-        className="ml-auto"
       />
     </div>
   );

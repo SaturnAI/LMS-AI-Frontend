@@ -31,6 +31,7 @@ function NotesContent({ email }: { email: string }) {
   const [sort, setSort] = useState<SortKey>("newest");
   const [tagFilter, setTagFilter] = useState<string>("all");
   const [bookmarkFilter, setBookmarkFilter] = useState<BookmarkFilter>("all");
+  const [focusMode, setFocusMode] = useState(false);
 
   const allTags = useMemo(() => {
     const set = new Set<string>();
@@ -125,36 +126,41 @@ function NotesContent({ email }: { email: string }) {
       />
 
       <div className="flex min-h-0 flex-1 gap-4 rounded-2xl border bg-muted/30">
-        <div className="flex w-72 shrink-0 flex-col gap-2 overflow-y-auto border-r p-3">
-          <div className="flex items-center justify-between px-1 py-1">
-            <span className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">My notes</span>
-            <button
-              type="button"
-              onClick={handleAddNote}
-              aria-label="Add note"
-              className="inline-flex size-6 cursor-pointer items-center justify-center rounded-md text-muted-foreground hover:bg-card hover:text-foreground"
-            >
-              <Plus className="size-4" />
-            </button>
+        {!focusMode && (
+          <div className="flex w-72 shrink-0 flex-col gap-2 overflow-y-auto border-r p-3">
+            <div className="flex items-center justify-between px-1 py-1">
+              <span className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">My notes</span>
+              <button
+                type="button"
+                onClick={handleAddNote}
+                aria-label="Add note"
+                className="inline-flex size-6 cursor-pointer items-center justify-center rounded-md text-muted-foreground hover:bg-card hover:text-foreground"
+              >
+                <Plus className="size-4" />
+              </button>
+            </div>
+            {visibleNotes.map((note) => (
+              <NoteListItem
+                key={note.id}
+                note={note}
+                active={note.id === selectedId}
+                onSelect={() => setSelectedId(note.id)}
+              />
+            ))}
           </div>
-          {visibleNotes.map((note) => (
-            <NoteListItem
-              key={note.id}
-              note={note}
-              active={note.id === selectedId}
-              onSelect={() => setSelectedId(note.id)}
-            />
-          ))}
-        </div>
+        )}
 
         <NoteEditor
           note={selectedNote}
           notesCount={notes.length}
+          isFullScreen={focusMode}
+          onToggleFullScreen={() => setFocusMode((v) => !v)}
           onUpdate={(patch) => selectedNote && updateNote(selectedNote.id, patch)}
           onDelete={() => {
             if (!selectedNote) return;
             deleteNote(selectedNote.id);
             setSelectedId(null);
+            setFocusMode(false);
           }}
         />
       </div>

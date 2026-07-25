@@ -99,7 +99,13 @@ export function loadNotes(email: string): Note[] {
   }
 }
 
-export function persistNotes(email: string, notes: Note[]): void {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(storageKey(email), JSON.stringify(notes));
+/** Returns false on failure (e.g. quota exceeded — attachments push notes toward localStorage's size limit). */
+export function persistNotes(email: string, notes: Note[]): boolean {
+  if (typeof window === "undefined") return true;
+  try {
+    localStorage.setItem(storageKey(email), JSON.stringify(notes));
+    return true;
+  } catch {
+    return false;
+  }
 }

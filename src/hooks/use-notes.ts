@@ -1,7 +1,8 @@
 "use client";
 
 /** Local-only notes CRUD (see lib/notes-storage.ts). Persists on every change, scoped to the signed-in user. */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { EMPTY_CONTENT, loadNotes, persistNotes, type Note } from "@/lib/notes-storage";
 
 function makeId(): string {
@@ -17,8 +18,14 @@ export function useNotes(email: string) {
     setLoaded(true);
   }, [email]);
 
+  const wasFailing = useRef(false);
   useEffect(() => {
-    if (loaded) persistNotes(email, notes);
+    if (!loaded) return;
+    const ok = persistNotes(email, notes);
+    if (!ok && !wasFailing.current) {
+      toast.error("Couldn't save — local storage is full. Try removing a large attachment or an old note.");
+    }
+    wasFailing.current = !ok;
   }, [notes, email, loaded]);
 
   function addNote(): Note {
