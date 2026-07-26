@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useCompanies, useEnterCompany, useSetCompanyEnabled } from "@/hooks/use-companies";
+import { useAutoOpenCreate } from "@/hooks/use-auto-open-create";
 import { isSuperAdmin } from "@/lib/rbac";
 import { ROUTES } from "@/lib/constants";
 import { avatarTintFor } from "@/lib/avatar-color";
@@ -44,6 +45,11 @@ function CompaniesContent() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Company | null>(null);
   const [toggling, setToggling] = useState<Company | null>(null);
+
+  useAutoOpenCreate(() => {
+    setEditing(null);
+    setFormOpen(true);
+  });
 
   const rows = useMemo(() => {
     if (!data) return [];

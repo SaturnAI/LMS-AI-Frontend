@@ -21,8 +21,9 @@ export function EmployeeOverview({ profile }: { profile: Profile }) {
   const canLogs = canViewPage(profile, "log_manager");
 
   const actions: QuickAction[] = [];
-  if (canEditPage(profile, "leads")) actions.push({ label: "Add lead", href: ROUTES.leads });
-  if (canEditPage(profile, "employee_master")) actions.push({ label: "Add employee", href: ROUTES.employees });
+  if (canEditPage(profile, "leads")) actions.push({ label: "Add lead", href: `${ROUTES.leads}?create=true` });
+  if (canEditPage(profile, "employee_master"))
+    actions.push({ label: "Add employee", href: `${ROUTES.employees}?create=true` });
 
   const hasAnyModule = canLeads || canTeam || canLogs;
 

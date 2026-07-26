@@ -21,8 +21,8 @@ export function CompanyAdminOverview({ profile }: { profile: Profile }) {
         actions={
           <QuickActions
             actions={[
-              { label: "Add lead", href: ROUTES.leads },
-              { label: "Add employee", href: ROUTES.employees },
+              { label: "Add lead", href: `${ROUTES.leads}?create=true` },
+              { label: "Add employee", href: `${ROUTES.employees}?create=true` },
             ]}
           />
         }

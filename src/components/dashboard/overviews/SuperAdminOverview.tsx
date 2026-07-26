@@ -22,11 +22,14 @@ export function SuperAdminOverview({ profile }: { profile: Profile }) {
         description="Platform overview — companies and administrators."
         actions={
           <div className="flex flex-wrap gap-2">
-            <Link href={ROUTES.superAdmins} className={buttonVariants({ variant: "outline", size: "sm" })}>
+            <Link
+              href={`${ROUTES.superAdmins}?create=true`}
+              className={buttonVariants({ variant: "outline", size: "sm" })}
+            >
               <Plus className="size-4" />
               Super admin
             </Link>
-            <Link href={ROUTES.companies} className={buttonVariants({ size: "sm" })}>
+            <Link href={`${ROUTES.companies}?create=true`} className={buttonVariants({ size: "sm" })}>
               <Plus className="size-4" />
               Add company
             </Link>

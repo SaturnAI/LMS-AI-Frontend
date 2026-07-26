@@ -19,6 +19,7 @@ import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { LeadPriorityBadge, LeadStatusBadge } from "@/components/dashboard/LeadStatusBadge";
 import { useAuth } from "@/hooks/use-auth";
 import { useLeads } from "@/hooks/use-leads";
+import { useAutoOpenCreate } from "@/hooks/use-auto-open-create";
 import { canEditPage, canViewPage, hasTenantContext } from "@/lib/rbac";
 import type { LeadListItem } from "@/lib/api";
 import { LeadFormDialog } from "@/components/leads/LeadFormDialog";
@@ -44,6 +45,12 @@ function LeadsContent() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<LeadListItem | null>(null);
   const [viewing, setViewing] = useState<LeadListItem | null>(null);
+
+  useAutoOpenCreate(() => {
+    if (!canEdit) return;
+    setEditing(null);
+    setFormOpen(true);
+  });
 
   // Debounce search input before it drives the server-side query.
   useEffect(() => {

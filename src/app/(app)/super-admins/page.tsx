@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/use-auth";
 import { useSetSuperAdminEnabled, useSuperAdmins } from "@/hooks/use-super-admins";
+import { useAutoOpenCreate } from "@/hooks/use-auto-open-create";
 import { isSuperAdmin } from "@/lib/rbac";
 import type { SuperAdmin } from "@/lib/api";
 import { SuperAdminFormDialog } from "@/components/super-admins/SuperAdminFormDialog";
@@ -40,6 +41,11 @@ function SuperAdminsContent() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<SuperAdmin | null>(null);
   const [toggling, setToggling] = useState<SuperAdmin | null>(null);
+
+  useAutoOpenCreate(() => {
+    setEditing(null);
+    setFormOpen(true);
+  });
 
   const rows = useMemo(() => {
     if (!data) return [];

@@ -20,6 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/use-auth";
 import { useDisabledEmployees, useEnabledEmployees, useSetEmployeeEnabled } from "@/hooks/use-employees";
+import { useAutoOpenCreate } from "@/hooks/use-auto-open-create";
 import { canEditPage, canViewPage, hasTenantContext } from "@/lib/rbac";
 import type { Employee } from "@/lib/api";
 import { EmployeeFormDialog } from "@/components/employees/EmployeeFormDialog";
@@ -42,6 +43,12 @@ function EmployeesContent() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Employee | null>(null);
   const [toggling, setToggling] = useState<Employee | null>(null);
+
+  useAutoOpenCreate(() => {
+    if (!canEdit) return;
+    setEditing(null);
+    setFormOpen(true);
+  });
 
   const enabledQuery = useEnabledEmployees();
   const disabledQuery = useDisabledEmployees();
