@@ -14,6 +14,7 @@ import { DataTable, type Column } from "@/components/common/DataTable";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { RowActionsMenu } from "@/components/common/RowActionsMenu";
+import { BackLink } from "@/components/common/BackLink";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -21,7 +22,8 @@ import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/use-auth";
 import { useDisabledEmployees, useEnabledEmployees, useSetEmployeeEnabled } from "@/hooks/use-employees";
 import { useAutoOpenCreate } from "@/hooks/use-auto-open-create";
-import { canEditPage, canViewPage, hasTenantContext } from "@/lib/rbac";
+import { canEditPage, canViewPage, hasTenantContext, isSuperAdmin } from "@/lib/rbac";
+import { companyHubRoute } from "@/lib/constants";
 import type { Employee } from "@/lib/api";
 import { EmployeeFormDialog } from "@/components/employees/EmployeeFormDialog";
 
@@ -111,6 +113,10 @@ function EmployeesContent() {
 
   return (
     <div className="flex flex-col gap-6">
+      {profile && isSuperAdmin(profile) && hasTenantContext(profile) && (
+        <BackLink href={companyHubRoute(profile.tenant_id!)} label="Back to company" />
+      )}
+
       <PageHeader
         title="Employees"
         description="Manage your company's team members."

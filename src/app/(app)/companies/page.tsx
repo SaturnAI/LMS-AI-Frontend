@@ -3,7 +3,7 @@
 /** Route: `/companies` — tenant companies management (super_admin only). */
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Building2, LogIn, Plus } from "lucide-react";
+import { Building2, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { RequireAccess } from "@/components/common/RequireAccess";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -19,11 +19,11 @@ import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useCompanies, useEnterCompany, useSetCompanyEnabled } from "@/hooks/use-companies";
 import { useAutoOpenCreate } from "@/hooks/use-auto-open-create";
 import { isSuperAdmin } from "@/lib/rbac";
-import { ROUTES } from "@/lib/constants";
+import { ROUTES, companyHubRoute } from "@/lib/constants";
 import { avatarTintFor } from "@/lib/avatar-color";
 import { PLAN_STYLES } from "@/lib/status-colors";
 import { cn, initials } from "@/lib/utils";
-import type { Company } from "@/lib/api";
+import { companyLogoUrlForSuperAdmin, type Company } from "@/lib/api";
 import { CompanyFormDialog } from "@/components/companies/CompanyFormDialog";
 
 export default function CompaniesPage() {
@@ -74,10 +74,14 @@ function CompaniesContent() {
   }
 
   async function handleEnter(company: Company) {
+    if (company.is_disabled) {
+      toast.error("This company is disabled — enable it first.");
+      return;
+    }
     try {
       await enterCompany.mutateAsync(company.company_code);
       toast.success(`Now viewing ${company.legal_name}.`);
-      router.push(ROUTES.employees);
+      router.push(companyHubRoute(company.company_code));
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not enter company.");
     }
@@ -89,14 +93,7 @@ function CompaniesContent() {
       header: "Company",
       cell: (c) => (
         <div className="flex items-center gap-3">
-          <span
-            className={cn(
-              "grid size-8 shrink-0 place-items-center rounded-full text-xs font-semibold",
-              avatarTintFor(c.company_code),
-            )}
-          >
-            {initials(c.legal_name)}
-          </span>
+          <CompanyLogo company={c} />
           <div className="min-w-0">
             <p className="truncate font-medium text-foreground">{c.legal_name}</p>
             <p className="truncate text-xs text-muted-foreground">{c.email}</p>
@@ -124,23 +121,22 @@ function CompaniesContent() {
       headerHidden: true,
       className: "text-right",
       cell: (c) => (
-        <RowActionsMenu label={`Actions for ${c.legal_name}`}>
-          <DropdownMenuItem onClick={() => handleEnter(c)} disabled={c.is_disabled}>
-            <LogIn className="size-4" />
-            Enter company
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              setEditing(c);
-              setFormOpen(true);
-            }}
-          >
-            Edit
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setToggling(c)} className={c.is_disabled ? undefined : "text-destructive"}>
-            {c.is_disabled ? "Enable" : "Disable"}
-          </DropdownMenuItem>
-        </RowActionsMenu>
+        // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- stop the row's onRowClick from also firing
+        <div onClick={(e) => e.stopPropagation()}>
+          <RowActionsMenu label={`Actions for ${c.legal_name}`}>
+            <DropdownMenuItem
+              onClick={() => {
+                setEditing(c);
+                setFormOpen(true);
+              }}
+            >
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setToggling(c)} className={c.is_disabled ? undefined : "text-destructive"}>
+              {c.is_disabled ? "Enable" : "Disable"}
+            </DropdownMenuItem>
+          </RowActionsMenu>
+        </div>
       ),
     },
   ];
@@ -176,6 +172,7 @@ function CompaniesContent() {
             columns={columns}
             rows={rows}
             rowKey={(c) => c.company_code}
+            onRowClick={handleEnter}
             isLoading={isPending}
             isError={isError}
             errorMessage={(error as Error)?.message}
@@ -205,5 +202,32 @@ function CompaniesContent() {
         onConfirm={confirmToggle}
       />
     </div>
+  );
+}
+
+function CompanyLogo({ company }: { company: Company }) {
+  const [broken, setBroken] = useState(false);
+
+  if (broken) {
+    return (
+      <span
+        className={cn(
+          "grid size-8 shrink-0 place-items-center rounded-full text-xs font-semibold",
+          avatarTintFor(company.company_code),
+        )}
+      >
+        {initials(company.legal_name)}
+      </span>
+    );
+  }
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element -- credentialed, dynamic backend image; not a static asset
+    <img
+      src={companyLogoUrlForSuperAdmin(company.company_code)}
+      alt=""
+      className="size-8 shrink-0 rounded-full object-cover"
+      onError={() => setBroken(true)}
+    />
   );
 }

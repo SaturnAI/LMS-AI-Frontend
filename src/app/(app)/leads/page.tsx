@@ -14,13 +14,15 @@ import { PageToolbar } from "@/components/common/PageToolbar";
 import { DataTable, type Column } from "@/components/common/DataTable";
 import { Pagination } from "@/components/common/Pagination";
 import { RowActionsMenu } from "@/components/common/RowActionsMenu";
+import { BackLink } from "@/components/common/BackLink";
 import { Button } from "@/components/ui/button";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { LeadPriorityBadge, LeadStatusBadge } from "@/components/dashboard/LeadStatusBadge";
 import { useAuth } from "@/hooks/use-auth";
 import { useLeads } from "@/hooks/use-leads";
 import { useAutoOpenCreate } from "@/hooks/use-auto-open-create";
-import { canEditPage, canViewPage, hasTenantContext } from "@/lib/rbac";
+import { canEditPage, canViewPage, hasTenantContext, isSuperAdmin } from "@/lib/rbac";
+import { companyHubRoute } from "@/lib/constants";
 import type { LeadListItem } from "@/lib/api";
 import { LeadFormDialog } from "@/components/leads/LeadFormDialog";
 import { LeadDetailDialog } from "@/components/leads/LeadDetailDialog";
@@ -37,7 +39,8 @@ export default function LeadsPage() {
 
 function LeadsContent() {
   const auth = useAuth();
-  const canEdit = auth.status === "authed" ? canEditPage(auth.profile, "leads") : false;
+  const profile = auth.status === "authed" ? auth.profile : null;
+  const canEdit = profile ? canEditPage(profile, "leads") : false;
 
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
@@ -121,6 +124,10 @@ function LeadsContent() {
 
   return (
     <div className="flex flex-col gap-6">
+      {profile && isSuperAdmin(profile) && hasTenantContext(profile) && (
+        <BackLink href={companyHubRoute(profile.tenant_id!)} label="Back to company" />
+      )}
+
       <PageHeader
         title="Leads"
         description="Manage your CRM pipeline."

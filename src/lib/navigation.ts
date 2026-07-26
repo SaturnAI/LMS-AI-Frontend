@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import type { Profile } from "@/lib/api";
 import { ROUTES } from "./constants";
-import { canViewPage, hasTenantContext, isCompanyAdmin, isSuperAdmin } from "./rbac";
+import { canViewPage, isCompanyAdmin, isSuperAdmin } from "./rbac";
 
 export interface NavItem {
   key: string;
@@ -33,7 +33,8 @@ export function buildNavigation(profile: Profile): NavItem[] {
   if (isSuperAdmin(profile)) {
     items.push({ key: "companies", label: "Companies", href: ROUTES.companies, icon: Building2 });
     items.push({ key: "super-admins", label: "Super Admins", href: ROUTES.superAdmins, icon: ShieldCheck });
-    if (hasTenantContext(profile)) items.push(LEADS, EMPLOYEES, LOGS);
+    // A super_admin's Employees/Leads/Logs access for an entered company is reached
+    // only through that company's hub (its quick-link cards) — not permanent nav items.
     return items;
   }
 

@@ -7,6 +7,7 @@ import { useLogs } from "@/hooks/use-logs";
 import { ROUTES } from "@/lib/constants";
 import { EmptyState } from "@/components/common/EmptyState";
 import { ErrorState } from "@/components/common/ErrorState";
+import { ActionTypeIcon } from "@/components/logs/ActionTypeIcon";
 import { SectionCard } from "./SectionCard";
 import { ListSkeleton } from "./ListSkeleton";
 
@@ -35,9 +36,12 @@ export function RecentActivityCard() {
       ) : (
         <ul className="divide-y">
           {data.activity_logs.slice(0, MAX_ITEMS).map((log, i) => (
-            <li key={`${log.created_at}-${i}`} className="px-5 py-3">
-              <p className="text-sm text-foreground">{log.message}</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">{log.created_at}</p>
+            <li key={`${log.created_at}-${i}`} className="flex items-start gap-3 px-5 py-3">
+              <ActionTypeIcon type={log.action_type} className="mt-0.5 size-7" />
+              <div className="min-w-0">
+                <p className="text-sm text-foreground">{log.message}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">{log.created_at}</p>
+              </div>
             </li>
           ))}
         </ul>

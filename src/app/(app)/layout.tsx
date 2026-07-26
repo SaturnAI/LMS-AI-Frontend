@@ -11,7 +11,6 @@ import { ROUTES } from "@/lib/constants";
 import FullPageLoader from "@/components/FullPageLoader";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { AppHeader } from "@/components/layout/AppHeader";
-import { TenantContextBar } from "@/components/layout/TenantContextBar";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -31,10 +30,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <AppHeader profile={auth.profile} />
         <div className="flex-1 overflow-y-auto">
-          <main className="flex w-full flex-col gap-4 p-4 lg:gap-6 lg:p-8">
-            <TenantContextBar profile={auth.profile} />
-            {children}
-          </main>
+          <main className="flex w-full flex-col gap-4 p-4 lg:gap-6 lg:p-8">{children}</main>
         </div>
       </div>
     </div>

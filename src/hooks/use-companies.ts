@@ -15,6 +15,7 @@ import {
   type CompanyProfileInput,
 } from "@/lib/api";
 import { profileQueryKey } from "./use-auth";
+import { setStoredTenantId } from "@/lib/tenant-storage";
 
 const KEY = ["companies"] as const;
 
@@ -53,12 +54,20 @@ export function useSetCompanyEnabled() {
   });
 }
 
-/** Entering/exiting a tenant context rewrites the auth cookie, so refresh the cached profile too. */
+/**
+ * Entering/exiting a tenant context rewrites the auth cookie for tenant-scoped
+ * endpoints, but `get_profile` never surfaces `tenant_id` for a super_admin (see
+ * tenant-storage.ts) — so we record it ourselves and invalidate the profile query
+ * to force `useAuth` to re-derive with it merged back in.
+ */
 export function useEnterCompany() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (companyCode: string) => setTenantId(companyCode),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: profileQueryKey }),
+    onSuccess: (_result, companyCode) => {
+      setStoredTenantId(companyCode);
+      queryClient.invalidateQueries({ queryKey: profileQueryKey });
+    },
   });
 }
 
@@ -66,7 +75,10 @@ export function useExitCompany() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => removeTenantId(),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: profileQueryKey }),
+    onSuccess: () => {
+      setStoredTenantId(null);
+      queryClient.invalidateQueries({ queryKey: profileQueryKey });
+    },
   });
 }
 

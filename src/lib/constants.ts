@@ -13,5 +13,8 @@ export const ROUTES = {
   account: "/account",
 } as const;
 
+/** super_admin — per-company hub (dashboard + quick links), reached after entering a company. */
+export const companyHubRoute = (companyCode: string) => `/companies/${companyCode}`;
+
 /** Employee-permissioned pages (mirror of the backend permission matrix). */
 export const PERMISSION_PAGES = ["employee_master", "leads", "log_manager"] as const;
