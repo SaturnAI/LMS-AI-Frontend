@@ -4,6 +4,7 @@
  * deterministic color-initials avatar rather than the real logo. Revisit once the list endpoint exposes tenant_id.
  */
 import { Badge } from "@/components/ui/badge";
+import { TruncatedText } from "@/components/common/TruncatedText";
 import type { Company } from "@/lib/api";
 import { avatarTintFor } from "@/lib/avatar-color";
 import { PLAN_STYLES, toneClass } from "@/lib/status-colors";
@@ -24,8 +25,8 @@ export function CompanyCard({ company }: { company: Company }) {
           {initials(company.legal_name)}
         </span>
         <div className="min-w-0 flex-1">
-          <p className="truncate font-semibold text-foreground">{company.legal_name}</p>
-          <p className="truncate text-sm text-muted-foreground">{company.email}</p>
+          <TruncatedText text={company.legal_name} className="font-semibold text-foreground" />
+          <TruncatedText text={company.email} className="text-sm text-muted-foreground" />
         </div>
         <Badge variant="secondary" className={toneClass(company.is_disabled ? "danger" : "success")}>
           {company.is_disabled ? "Disabled" : "Active"}

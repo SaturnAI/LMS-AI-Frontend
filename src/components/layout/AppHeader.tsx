@@ -1,6 +1,7 @@
 /** Top bar shown on every screen size: mobile nav trigger + brand on the left (mobile only), notifications + user menu on the right. */
 import { Bell } from "lucide-react";
 import type { Profile } from "@/lib/api";
+import { IconTooltip } from "@/components/common/IconTooltip";
 import { Brand } from "./Brand";
 import { MobileSidebar } from "./MobileSidebar";
 import { UserMenu } from "./UserMenu";
@@ -15,13 +16,15 @@ export function AppHeader({ profile }: { profile: Profile }) {
       <div className="hidden lg:block" />
       <div className="flex items-center gap-3">
         {/* Static placeholder: no notifications backend yet. */}
-        <button
-          type="button"
-          aria-label="Notifications"
-          className="relative inline-flex size-9 cursor-pointer items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
-        >
-          <Bell className="size-5" />
-        </button>
+        <IconTooltip label="Notifications">
+          <button
+            type="button"
+            aria-label="Notifications"
+            className="relative inline-flex size-9 cursor-pointer items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+          >
+            <Bell className="size-5" />
+          </button>
+        </IconTooltip>
         <UserMenu profile={profile} />
       </div>
     </header>

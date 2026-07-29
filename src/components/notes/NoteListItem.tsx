@@ -2,6 +2,7 @@
 import { Circle } from "lucide-react";
 import { extractPreviewItems, type Note } from "@/lib/notes-storage";
 import { cn } from "@/lib/utils";
+import { TruncatedText } from "@/components/common/TruncatedText";
 import { TagBadge } from "./TagBadge";
 
 interface NoteListItemProps {
@@ -29,13 +30,13 @@ export function NoteListItem({ note, active, onSelect }: NoteListItemProps) {
           ))}
         </div>
       )}
-      <p className="truncate font-semibold text-foreground">{note.title}</p>
+      <TruncatedText text={note.title} className="font-semibold text-foreground" />
       {preview.length > 0 ? (
         <ul className="flex flex-col gap-1">
           {preview.map((item, i) => (
-            <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+            <li key={i} className="flex min-w-0 items-center gap-2 text-sm text-muted-foreground">
               <Circle className="size-3.5 shrink-0" />
-              <span className={cn("truncate", item.checked && "line-through")}>{item.text}</span>
+              <TruncatedText text={item.text} className={cn(item.checked && "line-through")} />
             </li>
           ))}
         </ul>

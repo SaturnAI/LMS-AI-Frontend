@@ -10,13 +10,11 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { PageToolbar } from "@/components/common/PageToolbar";
 import { DataTable, type Column } from "@/components/common/DataTable";
 import { StatusBadge } from "@/components/common/StatusBadge";
-import { ConfirmDialog } from "@/components/common/ConfirmDialog";
-import { RowActionsMenu } from "@/components/common/RowActionsMenu";
+import { TruncatedText } from "@/components/common/TruncatedText";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { useCompanies, useEnterCompany, useSetCompanyEnabled } from "@/hooks/use-companies";
+import { useCompanies, useEnterCompany } from "@/hooks/use-companies";
 import { useAutoOpenCreate } from "@/hooks/use-auto-open-create";
 import { isSuperAdmin } from "@/lib/rbac";
 import { ROUTES, companyHubRoute } from "@/lib/constants";
@@ -37,19 +35,13 @@ export default function CompaniesPage() {
 function CompaniesContent() {
   const router = useRouter();
   const { data, isPending, isError, error, refetch } = useCompanies();
-  const setEnabled = useSetCompanyEnabled();
   const enterCompany = useEnterCompany();
 
   const [tab, setTab] = useState<"enabled" | "disabled">("enabled");
   const [query, setQuery] = useState("");
   const [formOpen, setFormOpen] = useState(false);
-  const [editing, setEditing] = useState<Company | null>(null);
-  const [toggling, setToggling] = useState<Company | null>(null);
 
-  useAutoOpenCreate(() => {
-    setEditing(null);
-    setFormOpen(true);
-  });
+  useAutoOpenCreate(() => setFormOpen(true));
 
   const rows = useMemo(() => {
     if (!data) return [];
@@ -58,20 +50,6 @@ function CompaniesContent() {
     if (!q) return byTab;
     return byTab.filter((c) => c.legal_name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q));
   }, [data, query, tab]);
-
-  async function confirmToggle() {
-    if (!toggling) return;
-    try {
-      const result = await setEnabled.mutateAsync({
-        companyCode: toggling.company_code,
-        enabled: toggling.is_disabled,
-      });
-      toast.success(result.message || "Updated.");
-      setToggling(null);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong.");
-    }
-  }
 
   async function handleEnter(company: Company) {
     if (company.is_disabled) {
@@ -95,12 +73,14 @@ function CompaniesContent() {
         <div className="flex items-center gap-3">
           <CompanyLogo company={c} />
           <div className="min-w-0">
-            <p className="truncate font-medium text-foreground">{c.legal_name}</p>
-            <p className="truncate text-xs text-muted-foreground">{c.email}</p>
+            <TruncatedText text={c.legal_name} className="font-medium text-foreground" />
+            <TruncatedText text={c.email} className="text-xs text-muted-foreground" />
           </div>
         </div>
       ),
     },
+    { key: "industry", header: "Industry", cell: (c) => c.industry || "—" },
+    { key: "contact", header: "Contact", cell: (c) => c.phone_number || "—" },
     {
       key: "plan",
       header: "Plan",
@@ -115,30 +95,6 @@ function CompaniesContent() {
     },
     { key: "seats", header: "Seats", cell: (c) => c.employee_limit ?? "—" },
     { key: "status", header: "Status", cell: (c) => <StatusBadge disabled={c.is_disabled} /> },
-    {
-      key: "actions",
-      header: "Actions",
-      headerHidden: true,
-      className: "text-right",
-      cell: (c) => (
-        // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- stop the row's onRowClick from also firing
-        <div onClick={(e) => e.stopPropagation()}>
-          <RowActionsMenu label={`Actions for ${c.legal_name}`}>
-            <DropdownMenuItem
-              onClick={() => {
-                setEditing(c);
-                setFormOpen(true);
-              }}
-            >
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setToggling(c)} className={c.is_disabled ? undefined : "text-destructive"}>
-              {c.is_disabled ? "Enable" : "Disable"}
-            </DropdownMenuItem>
-          </RowActionsMenu>
-        </div>
-      ),
-    },
   ];
 
   return (
@@ -147,13 +103,7 @@ function CompaniesContent() {
         title="Companies"
         description="Manage tenant companies."
         actions={
-          <Button
-            size="sm"
-            onClick={() => {
-              setEditing(null);
-              setFormOpen(true);
-            }}
-          >
+          <Button size="sm" onClick={() => setFormOpen(true)}>
             <Plus className="size-4" />
             Add company
           </Button>
@@ -185,22 +135,7 @@ function CompaniesContent() {
         </TabsContent>
       </Tabs>
 
-      <CompanyFormDialog open={formOpen} onOpenChange={setFormOpen} editing={editing} />
-
-      <ConfirmDialog
-        open={!!toggling}
-        onOpenChange={(open) => !open && setToggling(null)}
-        title={toggling?.is_disabled ? `Enable ${toggling?.legal_name}?` : `Disable ${toggling?.legal_name}?`}
-        description={
-          toggling?.is_disabled
-            ? "The company admin will regain access."
-            : "The company admin and all its employees will immediately lose access."
-        }
-        confirmLabel={toggling?.is_disabled ? "Enable" : "Disable"}
-        destructive={!toggling?.is_disabled}
-        loading={setEnabled.isPending}
-        onConfirm={confirmToggle}
-      />
+      <CompanyFormDialog open={formOpen} onOpenChange={setFormOpen} editing={null} />
     </div>
   );
 }

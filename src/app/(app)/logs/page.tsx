@@ -18,6 +18,7 @@ import { PageToolbar } from "@/components/common/PageToolbar";
 import { DataTable, type Column } from "@/components/common/DataTable";
 import { Pagination } from "@/components/common/Pagination";
 import { BackLink } from "@/components/common/BackLink";
+import { TruncatedText } from "@/components/common/TruncatedText";
 import { ActionTypeIcon } from "@/components/logs/ActionTypeIcon";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -107,8 +108,8 @@ function LogsContent() {
             {initials(l.action_performer_name)}
           </span>
           <div className="min-w-0">
-            <p className="truncate font-medium text-foreground">{l.action_performer_name}</p>
-            <p className="truncate text-xs text-muted-foreground">{l.action_performer_email}</p>
+            <TruncatedText text={l.action_performer_name} className="font-medium text-foreground" />
+            <TruncatedText text={l.action_performer_email} className="text-xs text-muted-foreground" />
           </div>
         </div>
       ),

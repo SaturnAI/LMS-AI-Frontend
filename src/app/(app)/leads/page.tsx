@@ -15,6 +15,7 @@ import { DataTable, type Column } from "@/components/common/DataTable";
 import { Pagination } from "@/components/common/Pagination";
 import { RowActionsMenu } from "@/components/common/RowActionsMenu";
 import { BackLink } from "@/components/common/BackLink";
+import { TruncatedText } from "@/components/common/TruncatedText";
 import { Button } from "@/components/ui/button";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { LeadPriorityBadge, LeadStatusBadge } from "@/components/dashboard/LeadStatusBadge";
@@ -77,8 +78,8 @@ function LeadsContent() {
         header: "Lead",
         cell: (l) => (
           <div className="min-w-0">
-            <p className="truncate font-medium text-foreground">{l.name}</p>
-            <p className="truncate text-xs text-muted-foreground">{l.company_name}</p>
+            <TruncatedText text={l.name} className="font-medium text-foreground" />
+            <TruncatedText text={l.company_name} className="text-xs text-muted-foreground" />
           </div>
         ),
       },

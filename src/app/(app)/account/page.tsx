@@ -18,6 +18,7 @@ import { useProfilePictureUrl } from "@/hooks/use-account";
 import { changePasswordSchema, updateProfileSchema, type ChangePasswordValues, type UpdateProfileValues } from "@/lib/validations/account";
 import FullPageLoader from "@/components/FullPageLoader";
 import { PageHeader } from "@/components/common/PageHeader";
+import { IconTooltip } from "@/components/common/IconTooltip";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -65,34 +66,36 @@ function ProfilePictureSection() {
 
   return (
     <section className="flex items-center gap-4 rounded-2xl border bg-card p-5">
-      <label
-        htmlFor="profile-picture"
-        aria-label="Change profile picture"
-        className="group relative grid size-16 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-full bg-muted"
-      >
-        {broken ? (
-          <User className="size-7 text-muted-foreground" />
-        ) : (
-          // eslint-disable-next-line @next/next/no-img-element -- credentialed, dynamic backend image
-          <img
-            src={profilePictureUrl}
-            alt="Profile"
-            className="size-16 object-cover"
-            onError={() => setBroken(true)}
+      <IconTooltip label="Change picture">
+        <label
+          htmlFor="profile-picture"
+          aria-label="Change profile picture"
+          className="group relative grid size-16 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-full bg-muted"
+        >
+          {broken ? (
+            <User className="size-7 text-muted-foreground" />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element -- credentialed, dynamic backend image
+            <img
+              src={profilePictureUrl}
+              alt="Profile"
+              className="size-16 object-cover"
+              onError={() => setBroken(true)}
+            />
+          )}
+          <span className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all group-hover:bg-black/40 group-hover:opacity-100">
+            <Pencil className="size-5 text-white" />
+          </span>
+          <input
+            id="profile-picture"
+            type="file"
+            accept="image/jpeg,image/png"
+            className="sr-only"
+            disabled={upload.isPending}
+            onChange={(e) => handleUpload(e.target.files?.[0])}
           />
-        )}
-        <span className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all group-hover:bg-black/40 group-hover:opacity-100">
-          <Pencil className="size-5 text-white" />
-        </span>
-        <input
-          id="profile-picture"
-          type="file"
-          accept="image/jpeg,image/png"
-          className="sr-only"
-          disabled={upload.isPending}
-          onChange={(e) => handleUpload(e.target.files?.[0])}
-        />
-      </label>
+        </label>
+      </IconTooltip>
       <div className="flex flex-col gap-2">
         <p className="text-sm font-medium text-foreground">Profile picture</p>
         <div className="flex items-center gap-2">

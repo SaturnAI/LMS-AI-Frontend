@@ -7,6 +7,7 @@ import { useLeads } from "@/hooks/use-leads";
 import { ROUTES } from "@/lib/constants";
 import { EmptyState } from "@/components/common/EmptyState";
 import { ErrorState } from "@/components/common/ErrorState";
+import { TruncatedText } from "@/components/common/TruncatedText";
 import { SectionCard } from "./SectionCard";
 import { ListSkeleton } from "./ListSkeleton";
 import { LeadStatusBadge } from "./LeadStatusBadge";
@@ -36,8 +37,8 @@ export function RecentLeadsCard({ title = "Recent leads" }: { title?: string }) 
           {data.leads.map((lead) => (
             <li key={lead.lead_code} className="flex items-center justify-between gap-3 px-5 py-3">
               <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-foreground">{lead.name}</p>
-                <p className="truncate text-xs text-muted-foreground">{lead.company_name}</p>
+                <TruncatedText text={lead.name} className="text-sm font-medium text-foreground" />
+                <TruncatedText text={lead.company_name} className="text-xs text-muted-foreground" />
               </div>
               <LeadStatusBadge status={lead.status} />
             </li>

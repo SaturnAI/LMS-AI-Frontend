@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { EmptyState } from "@/components/common/EmptyState";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { IconTooltip } from "@/components/common/IconTooltip";
 import { TagBadge } from "./TagBadge";
 import { NoteToolbar } from "./NoteToolbar";
 import { TaskItemStrike } from "./task-item-strike";
@@ -246,21 +247,25 @@ export function NoteEditor({
           <p className="mt-1 text-xs text-muted-foreground">{formatDate(note.createdAt)}</p>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
-          <button
-            type="button"
-            onClick={() => onUpdate({ bookmarked: !note.bookmarked })}
-            aria-label={note.bookmarked ? "Remove bookmark" : "Bookmark note"}
-            className="inline-flex size-8 cursor-pointer items-center justify-center rounded-full border text-muted-foreground hover:bg-muted"
-          >
-            <Bookmark className={note.bookmarked ? "size-4 fill-current text-primary" : "size-4"} />
-          </button>
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              aria-label="More note actions"
-              className="inline-flex size-8 items-center justify-center rounded-md hover:bg-muted"
+          <IconTooltip label={note.bookmarked ? "Remove bookmark" : "Bookmark note"}>
+            <button
+              type="button"
+              onClick={() => onUpdate({ bookmarked: !note.bookmarked })}
+              aria-label={note.bookmarked ? "Remove bookmark" : "Bookmark note"}
+              className="inline-flex size-8 cursor-pointer items-center justify-center rounded-full border text-muted-foreground hover:bg-muted"
             >
-              <MoreHorizontal className="size-4" />
-            </DropdownMenuTrigger>
+              <Bookmark className={note.bookmarked ? "size-4 fill-current text-primary" : "size-4"} />
+            </button>
+          </IconTooltip>
+          <DropdownMenu>
+            <IconTooltip label="More actions">
+              <DropdownMenuTrigger
+                aria-label="More note actions"
+                className="inline-flex size-8 items-center justify-center rounded-md hover:bg-muted"
+              >
+                <MoreHorizontal className="size-4" />
+              </DropdownMenuTrigger>
+            </IconTooltip>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={onToggleFullScreen}>
                 {isFullScreen ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
@@ -288,6 +293,7 @@ export function NoteEditor({
               type="button"
               onClick={() => removeTag(tag)}
               aria-label={`Remove tag ${tag}`}
+              title={`Remove tag ${tag}`}
               className="absolute -top-1.5 -right-1.5 hidden size-3.5 cursor-pointer items-center justify-center rounded-full bg-foreground text-background group-hover:flex"
             >
               <X className="size-2.5" />

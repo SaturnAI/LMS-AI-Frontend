@@ -49,7 +49,13 @@ export const FileAttachment = Node.create({
     });
     const removeButton = [
       "button",
-      { type: "button", "data-remove-attachment": "", "aria-label": "Remove attachment", class: "note-attachment-remove" },
+      {
+        type: "button",
+        "data-remove-attachment": "",
+        "aria-label": "Remove attachment",
+        title: "Remove attachment",
+        class: "note-attachment-remove",
+      },
       "×",
     ];
     const downloadLink = [

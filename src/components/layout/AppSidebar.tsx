@@ -6,6 +6,7 @@ import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import type { Profile } from "@/lib/api";
 import { buildNavigation } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
+import { IconTooltip } from "@/components/common/IconTooltip";
 import { Brand } from "./Brand";
 import { SidebarNav } from "./SidebarNav";
 
@@ -37,26 +38,30 @@ export function AppSidebar({ profile }: { profile: Profile }) {
       <div className={cn("flex h-16 shrink-0 items-center", collapsed ? "justify-center px-2" : "justify-between px-6")}>
         <Brand collapsed={collapsed} />
         {!collapsed && (
-          <button
-            type="button"
-            onClick={toggle}
-            aria-label="Collapse sidebar"
-            className="inline-flex size-7 cursor-pointer items-center justify-center rounded-md text-muted-foreground hover:bg-card/60 hover:text-foreground"
-          >
-            <PanelLeftClose className="size-4" />
-          </button>
+          <IconTooltip label="Collapse sidebar">
+            <button
+              type="button"
+              onClick={toggle}
+              aria-label="Collapse sidebar"
+              className="inline-flex size-7 cursor-pointer items-center justify-center rounded-md text-muted-foreground hover:bg-card/60 hover:text-foreground"
+            >
+              <PanelLeftClose className="size-4" />
+            </button>
+          </IconTooltip>
         )}
       </div>
 
       {collapsed && (
-        <button
-          type="button"
-          onClick={toggle}
-          aria-label="Expand sidebar"
-          className="mx-auto mb-1 inline-flex size-7 cursor-pointer items-center justify-center rounded-md text-muted-foreground hover:bg-card/60 hover:text-foreground"
-        >
-          <PanelLeftOpen className="size-4" />
-        </button>
+        <IconTooltip label="Expand sidebar">
+          <button
+            type="button"
+            onClick={toggle}
+            aria-label="Expand sidebar"
+            className="mx-auto mb-1 inline-flex size-7 cursor-pointer items-center justify-center rounded-md text-muted-foreground hover:bg-card/60 hover:text-foreground"
+          >
+            <PanelLeftOpen className="size-4" />
+          </button>
+        </IconTooltip>
       )}
 
       <div className="flex-1 overflow-y-auto">

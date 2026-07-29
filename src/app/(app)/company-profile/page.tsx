@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Building2, Pencil } from "lucide-react";
 import { RequireAccess } from "@/components/common/RequireAccess";
 import { PageHeader } from "@/components/common/PageHeader";
+import { IconTooltip } from "@/components/common/IconTooltip";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -99,36 +100,38 @@ function CompanyProfileContent() {
       <PageHeader title="Company Profile" description="Update your company's details and logo." />
 
       <div className="flex items-center gap-4 rounded-2xl border bg-card p-4">
-        <label
-          htmlFor="company-logo"
-          aria-label="Change company logo"
-          className="group relative grid size-16 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-xl bg-muted"
-        >
-          {logoPreview ? (
-            // eslint-disable-next-line @next/next/no-img-element -- local object URL preview of the selected file
-            <img src={logoPreview} alt="Company logo" className="size-16 object-cover" />
-          ) : logoBroken ? (
-            <Building2 className="size-7 text-muted-foreground" />
-          ) : (
-            // eslint-disable-next-line @next/next/no-img-element -- credentialed, dynamic backend image; not a static asset
-            <img
-              src={companyLogoUrl}
-              alt="Company logo"
-              className="size-16 object-cover"
-              onError={() => setLogoBroken(true)}
+        <IconTooltip label="Change logo">
+          <label
+            htmlFor="company-logo"
+            aria-label="Change company logo"
+            className="group relative grid size-16 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-xl bg-muted"
+          >
+            {logoPreview ? (
+              // eslint-disable-next-line @next/next/no-img-element -- local object URL preview of the selected file
+              <img src={logoPreview} alt="Company logo" className="size-16 object-cover" />
+            ) : logoBroken ? (
+              <Building2 className="size-7 text-muted-foreground" />
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element -- credentialed, dynamic backend image; not a static asset
+              <img
+                src={companyLogoUrl}
+                alt="Company logo"
+                className="size-16 object-cover"
+                onError={() => setLogoBroken(true)}
+              />
+            )}
+            <span className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all group-hover:bg-black/40 group-hover:opacity-100">
+              <Pencil className="size-5 text-white" />
+            </span>
+            <input
+              id="company-logo"
+              type="file"
+              accept="image/jpeg,image/png"
+              className="sr-only"
+              onChange={(e) => handleSelectLogo(e.target.files?.[0])}
             />
-          )}
-          <span className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all group-hover:bg-black/40 group-hover:opacity-100">
-            <Pencil className="size-5 text-white" />
-          </span>
-          <input
-            id="company-logo"
-            type="file"
-            accept="image/jpeg,image/png"
-            className="sr-only"
-            onChange={(e) => handleSelectLogo(e.target.files?.[0])}
-          />
-        </label>
+          </label>
+        </IconTooltip>
         <div className="flex flex-col gap-1.5">
           <p className="text-sm font-medium text-foreground">Company logo</p>
           <p className="text-xs text-muted-foreground">

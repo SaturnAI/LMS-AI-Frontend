@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useNotes } from "@/hooks/use-notes";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { IconTooltip } from "@/components/common/IconTooltip";
 import FullPageLoader from "@/components/FullPageLoader";
 import { NoteListItem } from "@/components/notes/NoteListItem";
 import { NoteEditor } from "@/components/notes/NoteEditor";
@@ -130,14 +131,16 @@ function NotesContent({ email }: { email: string }) {
           <div className="flex w-72 shrink-0 flex-col gap-2 overflow-y-auto border-r p-3">
             <div className="flex items-center justify-between px-1 py-1">
               <span className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">My notes</span>
-              <button
-                type="button"
-                onClick={handleAddNote}
-                aria-label="Add note"
-                className="inline-flex size-6 cursor-pointer items-center justify-center rounded-md text-muted-foreground hover:bg-card hover:text-foreground"
-              >
-                <Plus className="size-4" />
-              </button>
+              <IconTooltip label="Add note">
+                <button
+                  type="button"
+                  onClick={handleAddNote}
+                  aria-label="Add note"
+                  className="inline-flex size-6 cursor-pointer items-center justify-center rounded-md text-muted-foreground hover:bg-card hover:text-foreground"
+                >
+                  <Plus className="size-4" />
+                </button>
+              </IconTooltip>
             </div>
             {visibleNotes.map((note) => (
               <NoteListItem

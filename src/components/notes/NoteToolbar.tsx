@@ -5,6 +5,7 @@ import { Bold, Indent, Italic, ListChecks, Outdent, Paperclip, Underline, type L
 import type { Editor } from "@tiptap/react";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { IconTooltip } from "@/components/common/IconTooltip";
 
 const FONT_FAMILIES = [
   { label: "Inter", value: "Inter, sans-serif" },
@@ -55,22 +56,23 @@ function ToolbarButton({
   className?: string;
 }) {
   return (
-    <button
-      type="button"
-      aria-label={label}
-      aria-pressed={active}
-      title={label}
-      disabled={disabled}
-      onClick={onClick}
-      className={cn(
-        "inline-flex size-7 items-center justify-center rounded-md text-muted-foreground",
-        disabled ? "cursor-not-allowed opacity-40" : "cursor-pointer hover:bg-muted",
-        active && "bg-muted text-foreground",
-        className,
-      )}
-    >
-      <Icon className="size-4" />
-    </button>
+    <IconTooltip label={label}>
+      <button
+        type="button"
+        aria-label={label}
+        aria-pressed={active}
+        disabled={disabled}
+        onClick={onClick}
+        className={cn(
+          "inline-flex size-7 items-center justify-center rounded-md text-muted-foreground",
+          disabled ? "cursor-not-allowed opacity-40" : "cursor-pointer hover:bg-muted",
+          active && "bg-muted text-foreground",
+          className,
+        )}
+      >
+        <Icon className="size-4" />
+      </button>
+    </IconTooltip>
   );
 }
 

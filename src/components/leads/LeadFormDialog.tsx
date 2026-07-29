@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormField } from "@/components/common/FormField";
+import { TruncatedText } from "@/components/common/TruncatedText";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -668,8 +669,8 @@ export function LeadFormDialog({ open, onOpenChange, editing }: LeadFormDialogPr
                             disabled={isSubmitting}
                             className="size-4 rounded border-input accent-primary"
                           />
-                          <span className="truncate">{rep.name}</span>
-                          <span className="truncate text-xs text-muted-foreground">({rep.email})</span>
+                          <TruncatedText text={rep.name} className="min-w-0" />
+                          <TruncatedText text={`(${rep.email})`} className="min-w-0 text-xs text-muted-foreground" />
                         </label>
                       ))}
                     </div>
