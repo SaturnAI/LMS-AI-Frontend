@@ -7,7 +7,7 @@
  * DASHBOARD_REQUIREMENTS.md §11.6 for the flagged RBAC gap).
  */
 import { useEffect, useMemo, useState } from "react";
-import { Contact, Plus } from "lucide-react";
+import { Contact, Eye, Pencil, Plus } from "lucide-react";
 import { RequireAccess } from "@/components/common/RequireAccess";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PageToolbar } from "@/components/common/PageToolbar";
@@ -104,13 +104,18 @@ function LeadsContent() {
                 // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- stop the row's onRowClick from also firing
                 <div onClick={(e) => e.stopPropagation()}>
                   <RowActionsMenu label={`Actions for ${l.name}`}>
-                    <DropdownMenuItem onClick={() => setViewing(l)}>View details</DropdownMenuItem>
+                    <DropdownMenuItem className="gap-2 py-2" onClick={() => setViewing(l)}>
+                      <Eye className="size-4" />
+                      View details
+                    </DropdownMenuItem>
                     <DropdownMenuItem
+                      className="gap-2 py-2"
                       onClick={() => {
                         setEditing(l);
                         setFormOpen(true);
                       }}
                     >
+                      <Pencil className="size-4" />
                       Edit
                     </DropdownMenuItem>
                   </RowActionsMenu>

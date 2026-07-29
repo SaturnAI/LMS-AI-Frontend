@@ -20,7 +20,9 @@ export function RowActionsMenu({ label, children }: RowActionsMenuProps) {
           <MoreHorizontal className="size-4" />
         </DropdownMenuTrigger>
       </IconTooltip>
-      <DropdownMenuContent align="end">{children}</DropdownMenuContent>
+      <DropdownMenuContent align="end" className="w-56 p-1.5">
+        {children}
+      </DropdownMenuContent>
     </DropdownMenu>
   );
 }

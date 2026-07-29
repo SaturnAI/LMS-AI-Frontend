@@ -2,7 +2,7 @@
 
 /** Route: `/super-admins` — platform administrators management (super_admin only). */
 import { useMemo, useState } from "react";
-import { Plus, ShieldCheck } from "lucide-react";
+import { Ban, CheckCircle, Pencil, Plus, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { RequireAccess } from "@/components/common/RequireAccess";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -18,6 +18,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useSetSuperAdminEnabled, useSuperAdmins } from "@/hooks/use-super-admins";
 import { useAutoOpenCreate } from "@/hooks/use-auto-open-create";
 import { isSuperAdmin } from "@/lib/rbac";
+import { cn } from "@/lib/utils";
 import type { SuperAdmin } from "@/lib/api";
 import { SuperAdminFormDialog } from "@/components/super-admins/SuperAdminFormDialog";
 
@@ -79,18 +80,21 @@ function SuperAdminsContent() {
       cell: (a) => (
         <RowActionsMenu label={`Actions for ${a.name}`}>
           <DropdownMenuItem
+            className="gap-2 py-2"
             onClick={() => {
               setEditing(a);
               setFormOpen(true);
             }}
           >
+            <Pencil className="size-4" />
             Edit
           </DropdownMenuItem>
           <DropdownMenuItem
             disabled={a.email === currentEmail}
             onClick={() => setToggling(a)}
-            className={a.is_disabled ? undefined : "text-destructive"}
+            className={cn("gap-2 py-2", !a.is_disabled && "text-destructive")}
           >
+            {a.is_disabled ? <CheckCircle className="size-4" /> : <Ban className="size-4" />}
             {a.is_disabled ? "Enable" : "Disable"}
           </DropdownMenuItem>
         </RowActionsMenu>

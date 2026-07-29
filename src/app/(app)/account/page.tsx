@@ -7,18 +7,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Pencil, User } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import {
-  useChangePassword,
-  useDeleteProfilePicture,
-  useUpdateProfile,
-  useUpdateProfilePicture,
-} from "@/hooks/use-account";
+import { useDeleteProfilePicture, useUpdateProfile, useUpdateProfilePicture } from "@/hooks/use-account";
 import { roleLabel } from "@/lib/utils";
 import { useProfilePictureUrl } from "@/hooks/use-account";
-import { changePasswordSchema, updateProfileSchema, type ChangePasswordValues, type UpdateProfileValues } from "@/lib/validations/account";
+import { updateProfileSchema, type UpdateProfileValues } from "@/lib/validations/account";
 import FullPageLoader from "@/components/FullPageLoader";
 import { PageHeader } from "@/components/common/PageHeader";
 import { IconTooltip } from "@/components/common/IconTooltip";
+import { ChangePasswordDialog } from "@/components/account/ChangePasswordDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,7 +28,7 @@ export default function AccountPage() {
       <PageHeader title="Account" description="Your profile, picture, and password." />
       <ProfilePictureSection />
       <ProfileDetailsSection name={auth.profile.name} phone={auth.profile.phone_number} designation={auth.profile.designation} email={auth.profile.email} role={auth.profile.role} createdAt={auth.profile.created_at} />
-      <ChangePasswordSection />
+      <SecuritySection />
     </div>
   );
 }
@@ -125,24 +121,30 @@ function ProfileDetailsSection({
   createdAt?: string;
 }) {
   const updateMutation = useUpdateProfile();
+  const [isEditing, setIsEditing] = useState(false);
+  const defaults = { name, phone_number: phone ?? "", designation: designation ?? "" };
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting, isDirty },
-  } = useForm<UpdateProfileValues>({
-    resolver: zodResolver(updateProfileSchema),
-    defaultValues: { name, phone_number: phone ?? "", designation: designation ?? "" },
-  });
+    formState: { errors, isSubmitting },
+  } = useForm<UpdateProfileValues>({ resolver: zodResolver(updateProfileSchema), defaultValues: defaults });
 
   useEffect(() => {
     reset({ name, phone_number: phone ?? "", designation: designation ?? "" });
-  }, [name, phone, designation, reset]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- reset() identity is stable; re-run only when the source values change
+  }, [name, phone, designation]);
+
+  function handleCancel() {
+    reset(defaults);
+    setIsEditing(false);
+  }
 
   async function onSubmit(values: UpdateProfileValues) {
     try {
       const result = await updateMutation.mutateAsync(values);
       toast.success(result.message || "Profile updated.");
+      setIsEditing(false);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong.");
     }
@@ -150,7 +152,15 @@ function ProfileDetailsSection({
 
   return (
     <section className="rounded-2xl border bg-card p-5">
-      <h2 className="text-sm font-semibold text-foreground">Profile details</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-foreground">Profile details</h2>
+        {!isEditing && (
+          <Button type="button" variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+            <Pencil className="size-4" />
+            Edit
+          </Button>
+        )}
+      </div>
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-4 flex flex-col gap-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-1.5">
@@ -163,17 +173,17 @@ function ProfileDetailsSection({
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="acc-name">Name</Label>
-            <Input id="acc-name" disabled={isSubmitting} {...register("name")} />
+            <Input id="acc-name" disabled={!isEditing || isSubmitting} {...register("name")} />
             {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="acc-phone">Phone number</Label>
-            <Input id="acc-phone" disabled={isSubmitting} {...register("phone_number")} />
+            <Input id="acc-phone" disabled={!isEditing || isSubmitting} {...register("phone_number")} />
             {errors.phone_number && <p className="text-sm text-destructive">{errors.phone_number.message}</p>}
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="acc-designation">Designation</Label>
-            <Input id="acc-designation" disabled={isSubmitting} {...register("designation")} />
+            <Input id="acc-designation" disabled={!isEditing || isSubmitting} {...register("designation")} />
             {errors.designation && <p className="text-sm text-destructive">{errors.designation.message}</p>}
           </div>
           {createdAt && (
@@ -183,62 +193,34 @@ function ProfileDetailsSection({
             </div>
           )}
         </div>
-        <Button type="submit" className="self-start" disabled={isSubmitting || !isDirty}>
-          {isSubmitting ? "Saving…" : "Save changes"}
-        </Button>
+        {isEditing && (
+          <div className="flex gap-2">
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Saving…" : "Save changes"}
+            </Button>
+            <Button type="button" variant="outline" onClick={handleCancel} disabled={isSubmitting}>
+              Cancel
+            </Button>
+          </div>
+        )}
       </form>
     </section>
   );
 }
 
-function ChangePasswordSection() {
-  const changePasswordMutation = useChangePassword();
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<ChangePasswordValues>({
-    resolver: zodResolver(changePasswordSchema),
-    defaultValues: { old_password: "", new_password: "", confirm_password: "" },
-  });
-
-  async function onSubmit(values: ChangePasswordValues) {
-    try {
-      const result = await changePasswordMutation.mutateAsync({
-        oldPassword: values.old_password,
-        newPassword: values.new_password,
-      });
-      toast.success(result.message || "Password updated.");
-      reset();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong.");
-    }
-  }
+function SecuritySection() {
+  const [open, setOpen] = useState(false);
 
   return (
-    <section className="rounded-2xl border bg-card p-5">
-      <h2 className="text-sm font-semibold text-foreground">Change password</h2>
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-4 flex flex-col gap-4 sm:max-w-sm">
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="old-password">Current password</Label>
-          <Input id="old-password" type="password" disabled={isSubmitting} {...register("old_password")} />
-          {errors.old_password && <p className="text-sm text-destructive">{errors.old_password.message}</p>}
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="new-password">New password</Label>
-          <Input id="new-password" type="password" disabled={isSubmitting} {...register("new_password")} />
-          {errors.new_password && <p className="text-sm text-destructive">{errors.new_password.message}</p>}
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="confirm-password">Confirm new password</Label>
-          <Input id="confirm-password" type="password" disabled={isSubmitting} {...register("confirm_password")} />
-          {errors.confirm_password && <p className="text-sm text-destructive">{errors.confirm_password.message}</p>}
-        </div>
-        <Button type="submit" className="self-start" disabled={isSubmitting}>
-          {isSubmitting ? "Updating…" : "Update password"}
-        </Button>
-      </form>
+    <section className="flex items-center justify-between rounded-2xl border bg-card p-5">
+      <div>
+        <h2 className="text-sm font-semibold text-foreground">Password</h2>
+        <p className="mt-1 text-sm text-muted-foreground">Change the password used to sign in.</p>
+      </div>
+      <Button type="button" variant="outline" onClick={() => setOpen(true)}>
+        Change password
+      </Button>
+      <ChangePasswordDialog open={open} onOpenChange={setOpen} />
     </section>
   );
 }

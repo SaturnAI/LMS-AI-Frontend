@@ -5,7 +5,7 @@
  * Guarded by `employee_master` view permission + tenant context. Mutations require `edit`.
  */
 import { useMemo, useState } from "react";
-import { Plus, Users } from "lucide-react";
+import { Ban, CheckCircle, Pencil, Plus, Users } from "lucide-react";
 import { toast } from "sonner";
 import { RequireAccess } from "@/components/common/RequireAccess";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -24,6 +24,7 @@ import { useDisabledEmployees, useEnabledEmployees, useSetEmployeeEnabled } from
 import { useAutoOpenCreate } from "@/hooks/use-auto-open-create";
 import { canEditPage, canViewPage, hasTenantContext, isSuperAdmin } from "@/lib/rbac";
 import { companyHubRoute } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 import type { Employee } from "@/lib/api";
 import { EmployeeFormDialog } from "@/components/employees/EmployeeFormDialog";
 
@@ -91,17 +92,20 @@ function EmployeesContent() {
             cell: (e: Employee) => (
               <RowActionsMenu label={`Actions for ${e.name}`}>
                 <DropdownMenuItem
+                  className="gap-2 py-2"
                   onClick={() => {
                     setEditing(e);
                     setFormOpen(true);
                   }}
                 >
+                  <Pencil className="size-4" />
                   Edit
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => setToggling(e)}
-                  className={tab === "disabled" ? undefined : "text-destructive"}
+                  className={cn("gap-2 py-2", tab !== "disabled" && "text-destructive")}
                 >
+                  {tab === "disabled" ? <CheckCircle className="size-4" /> : <Ban className="size-4" />}
                   {tab === "disabled" ? "Enable" : "Disable"}
                 </DropdownMenuItem>
               </RowActionsMenu>
