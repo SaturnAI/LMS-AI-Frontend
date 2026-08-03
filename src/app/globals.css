@@ -156,6 +156,21 @@
   }
 }
 
+/* Smooth in-page scrolling for the homepage's "Features"/"AI Copilot" nav anchors. */
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  /* Homepage hero entrance animation (see HomePage.tsx) — skip the motion, keep the content visible. */
+  .hero-enter {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
+
 /* Notes editor (Tiptap) — task-list checkboxes and empty-node placeholders. */
 .tiptap-content {
   /* Unitless line-height (not a fixed px value) so it scales per-element with
