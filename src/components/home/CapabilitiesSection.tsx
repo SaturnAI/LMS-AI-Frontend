@@ -1,4 +1,4 @@
-/** Core-platform capability grid — real, shipped features, icons matching the app's own sidebar. */
+/** Core-platform capability grid: real, shipped features, icons matching the app's own sidebar. */
 import { Building2, Contact, NotebookText, ScrollText, ShieldCheck, Users, type LucideIcon } from "lucide-react";
 import { Reveal } from "./Reveal";
 
@@ -29,17 +29,17 @@ const CAPABILITIES: Capability[] = [
   {
     icon: ShieldCheck,
     title: "Role-based permissions",
-    description: "Granular view/edit/none access per page, per employee — enforced the same way for people and for AI.",
+    description: "Granular view/edit/none access per page, per employee, enforced the same way for people and for AI.",
   },
   {
     icon: ScrollText,
     title: "Activity audit trail",
-    description: "Every add, edit, enable, and disable is logged with who, what, and when — searchable and filterable.",
+    description: "Every add, edit, enable, and disable is logged with who, what, and when, searchable and filterable.",
   },
   {
     icon: NotebookText,
     title: "Personal notes & checklists",
-    description: "A rich-text workspace for the notes, checklists, and attachments that don't belong in a CRM record.",
+    description: "A rich-text workspace for the notes, checklists, and attachments that don't belong in an LMS record.",
   },
 ];
 
@@ -51,7 +51,7 @@ export function CapabilitiesSection() {
           Everything your team needs, one workspace
         </h2>
         <p className="mt-3 text-muted-foreground">
-          Companies, leads, and people — with permissions that hold up everywhere the data goes.
+          Companies, leads, and people, with permissions that hold up everywhere the data goes.
         </p>
       </Reveal>
 

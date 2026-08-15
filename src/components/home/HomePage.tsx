@@ -1,6 +1,6 @@
 "use client";
 
-/** Public marketing homepage — rendered at `/` for signed-out visitors (see src/app/page.tsx). */
+/** Public marketing homepage, rendered at `/` for signed-out visitors (see src/app/page.tsx). */
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Menu, Sparkles } from "lucide-react";
@@ -29,14 +29,14 @@ const CONTRIBUTORS = [
   },
 ];
 
-// No hard max-width — headline/paragraph text keep their own narrower `max-w` for
+// No hard max-width: headline/paragraph text keep their own narrower `max-w` for
 // readability, so the outer container is free to grow with the viewport instead of
 // leaving a fixed, ever-widening dead margin on large screens.
 const CONTAINER = "w-full px-4 sm:px-8 lg:px-12 xl:px-20 2xl:px-32";
 
 const NAV_LINKS = [
   { href: "#capabilities", label: "Features" },
-  { href: "#ai-features", label: "AI Copilot" },
+  { href: "#ai-features", label: "AI Assistant" },
   { href: "#security", label: "Security" },
 ];
 
@@ -131,20 +131,20 @@ function HeroSection() {
       <div className={cn(CONTAINER, "relative flex flex-col items-center pt-20 pb-24 text-center sm:pt-28")}>
         <span className="hero-enter inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-foreground animate-in fade-in slide-in-from-bottom-4 fill-mode-both duration-700">
           <Sparkles className="size-3.5 animate-pulse text-primary" />
-          Now with an AI Copilot &amp; Email Composer
+          Now with an AI Assistant &amp; Email Composer
         </span>
 
         <h1 className="hero-enter mt-6 max-w-3xl text-4xl leading-tight font-extrabold tracking-tight text-foreground animate-in fade-in slide-in-from-bottom-6 fill-mode-both delay-150 duration-700 sm:text-5xl">
-          The multi-tenant CRM that thinks alongside your team
+          The multi-tenant LMS that thinks alongside your team
         </h1>
         <p className="hero-enter mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground animate-in fade-in slide-in-from-bottom-6 fill-mode-both delay-300 duration-700">
           Manage companies, leads, and employees with role-based permissions that hold up
-          everywhere — then let an AI Copilot answer the questions your dashboards can&apos;t,
+          everywhere, then let AI answer the questions your dashboards can&apos;t,
           and draft the emails your reps don&apos;t have time to write.
         </p>
 
         <div className="hero-enter mt-8 flex flex-wrap items-center justify-center gap-3 animate-in fade-in slide-in-from-bottom-6 fill-mode-both delay-500 duration-700">
-          {/* PROTOTYPE — new pill/gradient/glow treatment, applied here only pending review before rolling out to every button. */}
+          {/* PROTOTYPE: new pill/gradient/glow treatment, applied here only pending review before rolling out to every button. */}
           <Link
             href={ROUTES.login}
             className="group inline-flex h-14 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-brand-navy to-[#3a4d82] px-9 text-base font-semibold text-white shadow-[0_10px_30px_-8px_rgba(44,58,100,0.5)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_36px_-6px_rgba(44,58,100,0.55)] hover:ring-4 hover:ring-brand-lime/30 active:translate-y-0"
@@ -171,7 +171,7 @@ function HeroSection() {
   );
 }
 
-/** Lightweight illustrative mockup — not a screenshot, just brand-consistent shapes. */
+/** Lightweight illustrative mockup, not a screenshot, just brand-consistent shapes. */
 function HeroPreviewCard() {
   return (
     <div className="relative mx-auto mt-16 w-full max-w-3xl rounded-2xl border bg-card p-5 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg sm:p-6">
@@ -192,7 +192,7 @@ function HeroPreviewCard() {
         <div className="rounded-xl border border-brand-navy/15 bg-brand-lime/20 p-4">
           <p className="flex items-center gap-1.5 text-xs font-medium text-foreground">
             <Sparkles className="size-3.5" />
-            Copilot
+            AI Assistant
           </p>
           <p className="mt-1 text-sm font-medium text-foreground">3 leads need follow-up</p>
         </div>
